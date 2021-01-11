@@ -1,0 +1,23 @@
+Rough Schema Design
+
+Tables
+
+Category
+- id
+- name
+- color
+
+
+Session
+- id
+
+
+Timings
+- id
+- sessionId (foreign key)
+- startTime # Can pause play so the duration might be shorter than endTime - startTime
+- endTime
+- duration
+- categoryId
+
+

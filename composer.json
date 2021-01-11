@@ -1,0 +1,8 @@
+{
+  "config": {
+    "use-include-path": true
+  },
+  "require": {
+      "scssphp/scssphp": "^1.3"
+  }
+}
