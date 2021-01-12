@@ -43,7 +43,6 @@
     <div class="timed-pills-container"> 
       <div class="timed-pills" >
         <div class="scrolling-pills" id="timed_pills_container" onscroll="isOverflown(this)">
-
         </div>
         <div class="shadow-container">
           <div class="border-shadows-top"></div>
