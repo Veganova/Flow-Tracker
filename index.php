@@ -2,48 +2,29 @@
 <!DOCTYPE html>
 
 <html>
-<head>
-<?php
+  <head>
+    <?php
+        // Composer setup
+        require_once __DIR__.'/vendor/autoload.php';
+        set_include_path(get_include_path() . PATH_SEPARATOR . __DIR__."/vendor");
+        include("config/compile_styles.php");
 
-  require __DIR__.'/vendor/autoload.php';
+        // Configure DB connection
+        include('config/db_connect.php');
 
-  // set_include_path(get_include_path() . PATH_SEPARATOR . __DIR__."/vendor");
-
-  $directory = "styles";
-  require_once "scssphp/scssphp/scss.inc.php";
-  // require_once "scssphp/scss.inc.php";
-  // require "scssphp/scss.inc.php";
-  use ScssPhp\ScssPhp\Compiler;
-
-  $scss = new Compiler();
-  $scss->setImportPaths('styles');
+        // Own classes
+        require_once 'classes/CategoryPill.php';
+        require_once 'templates/category_list.php';
+    ?>
+  </head>
   
-  // will search for 'assets/stylesheets/mixins.scss'
-?>
 
-<style>
-  <?= $scss->compile('@import "container.scss";'); ?>
-</style>
-</head>
-<?php
-
-  require_once 'config/classes.php';
-  
-  include('config/db_connect.php');
-  
-  $stmt = $pdo->query('SELECT * FROM category');
-  $cats = $stmt->fetchAll(PDO::FETCH_CLASS, "Category");
-  foreach($cats as $cat) {
-    echo $cat->bigName().'<br>';
-  }
-  // while($row = $stmt->fetch()) {
-  //   echo $row->name . '<br>';
-  // }
-?>
-
-<body>
-  <div class="container">
-    Container
-  </div>
-</body>
+  <body>
+    <div class="container">
+      <?php 
+        render_timed_pills(0);
+        render_pill_choices();
+      ?>
+    </div>
+  </body>
 </html>

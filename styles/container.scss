@@ -1,8 +1,25 @@
-.container {
-    color: red;
-    background: "yellow";
+@import "colors";
 
-    .box {
-      color: "blue";
-    }
+// Reset
+html, body{
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.container {
+    width: 100%;
+    height: 100%;
+
+    background: $background-dark;
+    color: $default-foreground;
+
+    font-family: Roboto;
+    font-style: normal;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
 }
