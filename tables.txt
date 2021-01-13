@@ -10,7 +10,8 @@ Category
 
 Session
 - id
-
+- draft (boolean)
+- creation date
 
 Timings
 - id
@@ -18,6 +19,6 @@ Timings
 - startTime # Can pause play so the duration might be shorter than endTime - startTime
 - endTime
 - duration
-- categoryId
+- categoryId (foreign key)
 
 

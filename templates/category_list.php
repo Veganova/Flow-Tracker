@@ -18,19 +18,35 @@
       }
     }
   }
+
+  function pauseClick(e) {
+    console.log("pause toggled");
+    if (typeof activeTimer !== "undefined") {
+      // There is an activeTimer
+
+      if (activeTimer.paused) {
+        // Currently is paused. Now that it is clicked, no longer paused.
+        activeTimer.unpause();
+        $(e).find("#play").css({"display": "none"});
+        $(e).find("#pause").css({"display": "block"});
+      } else {
+        activeTimer.pause();
+        $(e).find("#play").css({"display": "block"});
+        $(e).find("#pause").css({"display": "none"});
+      }
+    } else {
+      $(e).find("#play").css({"display": "none"});
+      $(e).find("#pause").css({"display": "none"});
+    }
+  }
 </script>
 
 <?php
-  function render_pill_choices() {
-    global $pdo;
-
-    $stmt = $pdo->query('SELECT * FROM category');
-    $pills = $stmt->fetchAll(PDO::FETCH_CLASS, "CategoryPill");
-
+  function render_pill_choices($categoryPills) {
     ?>
     <div class="pill-choices">
       <?php
-        foreach($pills as $pill) {
+        foreach($categoryPills as $pill) {
           echo $pill->render();
         }
       ?>
@@ -38,17 +54,32 @@
     <?php  
   }
 
-  function render_timed_pills($session_id) {
+  function render_timed_pills($timedPills, $categoryPills) {
     ?>
     <div class="timed-pills-container"> 
       <div class="timed-pills" >
         <div class="scrolling-pills" id="timed_pills_container" onscroll="isOverflown(this)">
+          <?php 
+            foreach($timedPills as $pill) {
+              echo $pill.render();
+            }
+          ?>
+
         </div>
         <div class="shadow-container">
           <div class="border-shadows-top"></div>
           <div class="border-shadows-bottom"></div>
         </div>
       </div>
+    </div>
+    <?php
+  }
+
+  function render_pause() {
+    ?>
+    <div class="pause-button" id="pauseContainer" onclick="pauseClick(this)">  
+      <img id="pause" src="../assets/pause.svg" alt="pause button" style="display: none">
+      <img id="play" src="../assets/play.svg" alt="play button" style="display: none">
     </div>
     <?php
   }

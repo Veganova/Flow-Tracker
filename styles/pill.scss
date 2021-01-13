@@ -2,7 +2,6 @@
 
 .pill-choices {
   display: flex;
-  // margin-top: auto;
   margin-bottom: 10px;
 }
 
@@ -41,6 +40,7 @@
   height: 100%;
 }
 
+// top shadow
 .border-shadows-top {
   position: absolute;
   top: 0;
@@ -49,6 +49,7 @@
   height: 30px;
 }
 
+// bottom shadow
 .border-shadows-bottom {
   position: absolute;
   bottom: 0;
@@ -60,7 +61,7 @@
 .pill, .pill-timed {
   color: black;
 
-  width: 120px;
+  width: 180px;
   height: 29px;
   line-height: 29px;
   border-radius: 19px;
@@ -73,4 +74,15 @@
 
 .pill-timed {
   margin-bottom: 10px;
+}
+
+.pause-button {
+  position: fixed;
+  right: 20px;
+  bottom: 50%;
+
+  img {
+    width: 65px;
+    height: 65px;
+  }
 }

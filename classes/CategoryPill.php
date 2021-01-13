@@ -5,14 +5,25 @@
     var request = $.ajax({
       url: "/requests/add_pill.php",
       type: "post",
-      data: {addPill: pillId}
+      data: {
+        addPill: {
+          categoryId: pillId,
+          sessionId: 
+        }
+      }
     })
 
-    // Callback handler that will be called on success
     request.done(function (response, textStatus, jqXHR){
-        // Log a message to the console
-        container.innerHTML += response;
+        if (typeof activeTimer !== 'undefined') {
+            // the variable is defined
+            clearInterval(activeTimer.intervalTimer);
+        } else {
+          $("#pause").css({"display": "block"});
+        }
+
+        $(container).append(response);
         container.dispatchEvent(new CustomEvent('scroll'));
+
     });
 
     // Callback handler that will be called on failure

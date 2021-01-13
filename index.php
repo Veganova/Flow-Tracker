@@ -11,20 +11,13 @@
 
         // Configure DB connection
         include('config/db_connect.php');
-
-        // Own classes
-        require_once 'classes/CategoryPill.php';
-        require_once 'templates/category_list.php';
     ?>
   </head>
   
 
   <body>
     <div class="container">
-      <?php 
-        render_timed_pills(0);
-        render_pill_choices();
-      ?>
+      <a href="/session.php">New Session </a>
     </div>
   </body>
 </html>
