@@ -21,7 +21,7 @@
 
   function pauseClick(e) {
     console.log("pause toggled");
-    if (typeof activeTimer !== "undefined") {
+    if (activeTimer.isActive()) {
       // There is an activeTimer
 
       if (activeTimer.paused) {
@@ -61,8 +61,9 @@
         <div class="scrolling-pills" id="timed_pills_container" onscroll="isOverflown(this)">
           <?php 
             foreach($timedPills as $pill) {
-              echo $pill.render();
+              echo $pill->render();
             }
+            initiateTimer();
           ?>
 
         </div>

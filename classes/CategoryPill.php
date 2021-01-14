@@ -1,29 +1,41 @@
 <script>
   function addTimedPill(pillId) {
-    var container = document.getElementById("timed_pills_container");
+    let container = document.getElementById("timed_pills_container");
 
-    var request = $.ajax({
+    let addPillData = {
+      categoryId: pillId,
+      sessionId: new URLSearchParams(window.location.search).get("session"),
+    };
+
+    if(activeTimer.isActive()) {
+      console.log("activeTmer is defined so an updateActivity will be set");
+      console.log(activeTimer);
+      // the variable is defined
+      addPillData["updateActivity"] = {
+        startTime: new Date(activeTimer.start).toISOString(),
+        endTime: new Date(Date.now()).toISOString(),
+        duration: activeTimer.duration,
+        id: activeTimer.instance.parent().attr("id")
+      };
+    }
+
+    let request = $.ajax({
       url: "/requests/add_pill.php",
       type: "post",
-      data: {
-        addPill: {
-          categoryId: pillId,
-          sessionId: 
-        }
-      }
+      data: { addPill: addPillData }
     })
 
     request.done(function (response, textStatus, jqXHR){
-        if (typeof activeTimer !== 'undefined') {
-            // the variable is defined
-            clearInterval(activeTimer.intervalTimer);
-        } else {
+        if (!activeTimer.isActive()) {
+          // if this is the first activity pill being added, then show the play pause.
           $("#pause").css({"display": "block"});
         }
 
         $(container).append(response);
         container.dispatchEvent(new CustomEvent('scroll'));
 
+        activeTimer.clearTimer();
+        activeTimer.startNewTimer();
     });
 
     // Callback handler that will be called on failure
