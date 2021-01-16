@@ -33,23 +33,20 @@
 
     $start = (new DateTime($startTime))->format('Y-m-d H:i:s');
     $end = (new DateTime($endTime))->format('Y-m-d H:i:s');
-    echo $start . "\n";
-    echo $end . "\n";
 
     if (!$stmt->execute([$start, $end, $duration, $id])) {
       echo "Update activity failed";
     }
   }
 
-
+  if (isset($_POST["updateActivity"])) {
+    // update times for previous activity
+    $U = $_POST["updateActivity"];
+    updateActivity($U["startTime"], $U["endTime"], $U["duration"], $U["id"]);
+  }
 
   if (isset($_POST["addPill"])) {    
-    if (isset($_POST["addPill"]["updateActivity"])) {
-      // update times for previous activity
-      echo "updating activity";
-      $U = $_POST["addPill"]["updateActivity"];
-      updateActivity($U["startTime"], $U["endTime"], $U["duration"], $U["id"]);
-    }
+    
 
     $pill_category_id = $_POST["addPill"]["categoryId"];
     $session_id = $_POST["addPill"]["sessionId"];
@@ -59,4 +56,6 @@
     $categoryPill = new CategoryTimedPill($activityId, $category->name, $category->color, "0", "0", 0);
     echo $categoryPill->render();    
   }
+
+  
 ?>

@@ -3,6 +3,7 @@
 
 <html>
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <?php
       // Composer setup
       require_once __DIR__.'/vendor/autoload.php';
@@ -24,7 +25,7 @@
       function addQueryParameter($url, $name, $value) {
         $segmented = explode("?", $url);
         if(count($segmented) > 1) {
-          $url = $segmented[1];
+          $url = $segmented[0];
         }
         
         $query = $_GET;
@@ -34,7 +35,19 @@
         return $url . "?" . $query_result;
       }
 
-      if (!isset($_GET['session'])) {
+      $createNewSession = !isset($_GET['session']);
+      if (isset($_GET['session'])) {
+        $sessionId = $_GET['session'];
+        $sql = 'SELECT * FROM session where id = :id';
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute(['id' => $sessionId]);
+        $session = $stmt->fetch(PDO::FETCH_ASSOC);;
+        if (!$session) {
+          $createNewSession = true;
+        }
+      }
+
+      if ($createNewSession) {
         $url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
         // If no session Id provided, create a new session
         $sessionId = addNewSession(123);
@@ -45,7 +58,7 @@
       // Own classes
       require_once 'classes/CategoryPill.php';
       require_once 'classes/CategoryTimedPill.php';
-      require_once 'templates/category_list.php';
+      require_once 'templates/active_session.php';
 
       function findCategoryById($categoryId, $categoryPills) {
         foreach($categoryPills as $categoryPill) {
@@ -60,7 +73,6 @@
       function loadExistingSession($sessionId, $categoryPills) {
         global $pdo;
 
-        echo "LOADING EXISTING!!";
         $sql = 'SELECT * FROM activity where sessionId = :sessionId';
         $stmt = $pdo->prepare($sql);
         $stmt->execute(['sessionId' => $sessionId]);
@@ -82,8 +94,6 @@
         return $timedPills;
       }
 
-      // echo $url;
-      $sessionId = $_GET['session'];
       $stmt = $pdo->query('SELECT * FROM category'); # TODO where userId = **
       $categoryPills = $stmt->fetchAll(PDO::FETCH_CLASS, "CategoryPill");
       $timedPills = loadExistingSession($sessionId, $categoryPills);
@@ -94,6 +104,11 @@
   <body>
     <div class="container">
       <?php 
+        insertCategoryTimedPillScripts();
+        insertCategoryPillScripts();
+        insertCategoryListScripts();
+
+        render_top_bar($session);
         render_timed_pills($timedPills, $categoryPills);
         render_pill_choices($categoryPills);
         render_pause();

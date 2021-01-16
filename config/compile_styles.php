@@ -11,4 +11,5 @@
 <style>
   <?= $scss->compile('@import "container.scss";'); ?>
   <?= $scss->compile('@import "pill.scss";'); ?>
+  <?= $scss->compile('@import "activity_header.scss";'); ?>
 </style>

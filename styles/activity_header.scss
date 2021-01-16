@@ -1,0 +1,68 @@
+@import 'colors';
+
+.top-bar {
+  width: 98%;
+  position: fixed;
+  top: 0;
+
+  display: flex;
+  margin-top: 15px;
+  justify-content: space-between;
+  align-items: center;
+
+  .back {
+    width: 56px;
+    height: 28px;
+
+    img {
+      cursor: pointer;  
+      width: 28px;
+      height: 28px;
+    }
+  }
+
+  .title {
+    font-weight: 200;
+    font-size: 24px;
+    line-height: 28px;
+    letter-spacing: 0.055em;
+    font-variant: small-caps;
+    font-feature-settings: 'cp';
+
+    position: fixed;
+    width: 100%;
+    text-align: center;
+    z-index: -1;
+  }
+
+  .save {
+    padding: 3.5px 10px;
+    border-radius: 3px;
+    border: solid 1px $default-foreground;
+
+    &:hover {
+      color: $background-dark;
+      background: $default-foreground;
+    }
+
+    cursor: pointer;
+  }
+}
+
+.pause-button {
+  cursor: pointer;
+  position: fixed;
+  right: 0px;
+  @media (min-width: 768px) {
+    right: 20px;
+  }
+  bottom: 50%;
+
+  img {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+
+

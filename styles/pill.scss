@@ -2,7 +2,19 @@
 
 .pill-choices {
   display: flex;
-  margin-bottom: 10px;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  padding-bottom: 20px;
+  max-width: 100%;
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 
 .timed-pills-container {
@@ -13,7 +25,7 @@
 }
 
 .timed-pills {
-  height: 20%;
+  height: 50%;
   position: relative;
 }
 
@@ -36,10 +48,6 @@
   scrollbar-width: none;  /* Firefox */
 }
 
-.shadow-container { 
-  height: 100%;
-}
-
 // top shadow
 .border-shadows-top {
   position: absolute;
@@ -60,8 +68,10 @@
 
 .pill, .pill-timed {
   color: black;
+  cursor: pointer;
 
   width: 180px;
+  min-width: 180px;
   height: 29px;
   line-height: 29px;
   border-radius: 19px;
@@ -70,19 +80,13 @@
 
 .pill {
   margin-right: 10px;
+
+  &:last-child{
+    margin-right: 0px;
+  }
 }
 
 .pill-timed {
   margin-bottom: 10px;
 }
 
-.pause-button {
-  position: fixed;
-  right: 20px;
-  bottom: 50%;
-
-  img {
-    width: 65px;
-    height: 65px;
-  }
-}
