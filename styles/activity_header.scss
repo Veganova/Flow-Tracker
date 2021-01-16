@@ -40,7 +40,7 @@
     border-radius: 3px;
     border: solid 1px $default-foreground;
 
-    &:hover {
+    &:hover, &:active {
       color: $background-dark;
       background: $default-foreground;
     }

@@ -163,11 +163,13 @@
             this.instance = $(".timer").last();
             this.start = Date.now();
             this.totalPauseDuration = 0;
-            console.log(this.instance.attr("duration"));
             this.startDuration = parseInt(this.instance.attr("duration")) || 0;
 
-            // Set this to this cause this isn't known if called from setInterval..lol
-            // fiiine here you go: 
+            // Scroll new timer into view
+            $('#timed_pills_container').animate({
+                scrollTop: parseInt(this.instance.offset().top)
+            }, 2000);
+
             // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/call
             this.intervalTimer = setInterval(() => this.updateTime.call(this), 1000); // update about every second
           },

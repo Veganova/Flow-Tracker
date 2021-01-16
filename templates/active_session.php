@@ -37,7 +37,7 @@
         parent.find(".border-shadows-bottom").css({"display": "block"});
         parent.find(".border-shadows-top").css({"display": "block"});
         
-        if (el.scrollHeight - el.clientHeight == el.scrollTop) {
+        if (Math.abs(el.scrollHeight - el.clientHeight - el.scrollTop) < 3) {
           // console.log("hide bottom");
           parent.find(".border-shadows-bottom").css({"display": "none"});
         } else if (el.scrollTop == 0) {

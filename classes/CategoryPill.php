@@ -8,7 +8,7 @@
         e.returnValue = '';
 
         console.log("go for the updated!!");
-        activityTimer.updateTimePill();
+        activityTimer.updateTimePill(()=>{});
     });
 
     function addTimedPill(pillId) {
