@@ -197,7 +197,8 @@
         }
 
         $(document).keypress(function(e) {
-          if(e.which == 32) { // Spacebar 
+          let inputFocused = document.activeElement.tagName.toLocaleLowerCase() == "input";
+          if(!inputFocused && e.which == 32) { // Spacebar 
             activeTimer.togglePause();
           }
         });

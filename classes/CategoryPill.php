@@ -70,6 +70,12 @@
 
   // Once clicked will add timed pills to the page
   class CategoryPill implements iDrawable {
+    public function __construct($id, $name, $color) {
+      $this->id = $id;
+      $this->name = $name;
+      $this->color = $color;
+    }
+
     private function renderContent() {
       return $this->name;
     }
@@ -77,6 +83,7 @@
     public function render() {
       ?>
         <div 
+          value="<?=$this->name?>"
           class="pill"
           style="background: <?= $this->color; ?>"
           onclick="addTimedPill(<?= $this->id ?>)"

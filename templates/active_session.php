@@ -22,9 +22,34 @@
               $("#save").html("Unsave")
             }
           });
+
+          request.fail(function (jqXHR, textStatus, errorThrown){
+            console.error("The following error occurred: ", textStatus, errorThrown);
+          });
         }
-      )
-      
+      ) 
+    }
+
+    function addNewCategory(name, color) {
+      let request = $.ajax({
+        url: "/requests/add_category.php",
+        type: "post",
+        data: {
+          addCategory: { 
+            name: name, 
+            color: color
+          }
+        }
+      });
+
+      request.done(function (response, textStatus, jqXHR){
+        console.log("added category", response);
+        $(".pill-choices").append(response);
+      });
+
+      request.fail(function (jqXHR, textStatus, errorThrown){
+        console.error("The following error occurred: ", textStatus, errorThrown);
+      });
     }
 
     function isOverflown(el) {
@@ -43,6 +68,21 @@
         } else if (el.scrollTop == 0) {
           // console.log("hide top");
           parent.find(".border-shadows-top").css({"display": "none"});
+        }
+      }
+    }
+
+    function onSearchInput({value}) {
+      let searchTerm = value.toLowerCase();
+      let l = searchTerm.length;
+      $(".add-pill-choice").css({"display": l > 0 ? "block" : "none"}); 
+
+      for(let childRaw of $(".pill-choices").children()) {
+        let child = $(childRaw);
+        if (child.attr("value").toLowerCase().substring(0, l) === searchTerm) {
+          child.css({"display": "block"});
+        } else {
+          child.css({"display": "none"});
         }
       }
     }
@@ -70,7 +110,13 @@
 
   function render_pill_choices($categoryPills) {
     ?>
-    <div class="pill-choices">
+    <div class="search">
+      <input id="search" maxlength="12" type="text" placeholder="Search or create activities" oninput="onSearchInput(this)">
+      <div class="add-pill-choice" style="display: none">
+        <span class="add-button" onclick="colorPickerModal()">Add +</span>
+      </div>
+    </div>
+    <div class="pill-choices" style="display: flex">
       <?php
         foreach($categoryPills as $pill) {
           echo $pill->render();

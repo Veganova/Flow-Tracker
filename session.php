@@ -8,10 +8,10 @@
       // Composer setup
       require_once __DIR__.'/vendor/autoload.php';
       set_include_path(get_include_path() . PATH_SEPARATOR . __DIR__."/vendor");
-      include("config/compile_styles.php");
+      require_once "config/compile_styles.php";
 
       // Configure DB connection
-      include('config/db_connect.php');
+      require_once 'config/db_connect.php';
 
       function addNewSession($userId) {
         global $pdo;
@@ -59,6 +59,7 @@
       require_once 'classes/CategoryPill.php';
       require_once 'classes/CategoryTimedPill.php';
       require_once 'templates/active_session.php';
+      require_once 'component/modal.php';
 
       function findCategoryById($categoryId, $categoryPills) {
         foreach($categoryPills as $categoryPill) {
@@ -95,7 +96,16 @@
       }
 
       $stmt = $pdo->query('SELECT * FROM category'); # TODO where userId = **
-      $categoryPills = $stmt->fetchAll(PDO::FETCH_CLASS, "CategoryPill");
+      $categoryPillsRaw = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      $categoryPills = [];
+      foreach($categoryPillsRaw as $categoryPillRaw) {
+        $categoryPills[] = new CategoryPill(
+          $categoryPillRaw['id'], 
+          $categoryPillRaw['name'], 
+          $categoryPillRaw['color']
+        );
+      }
+
       $timedPills = loadExistingSession($sessionId, $categoryPills);
     ?>
   </head>
@@ -103,11 +113,13 @@
 
   <body>
     <div class="container">
+      
       <?php 
         insertCategoryTimedPillScripts();
         insertCategoryPillScripts();
         insertCategoryListScripts();
-
+        insertModalScripts();
+        
         render_top_bar($session);
         render_timed_pills($timedPills, $categoryPills);
         render_pill_choices($categoryPills);
@@ -116,4 +128,3 @@
     </div>
   </body>
 </html>
-
