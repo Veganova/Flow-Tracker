@@ -38,7 +38,7 @@
       let htmlString = `
       <?php
         $tempPill = new CategoryPill(-1, "", "#444444");
-        echo $tempPill->render();
+        echo $tempPill->renderPill();
       ?>
       `;
 

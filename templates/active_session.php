@@ -117,11 +117,14 @@
       </div>
     </div>
     <div class="pill-choices" style="display: flex">
-      <?php
-        foreach($categoryPills as $pill) {
-          echo $pill->render();
-        }
-      ?>
+      <div class="pill-choices2">
+        <?php
+          foreach($categoryPills as $pill) {
+            echo $pill->render();
+            break;
+          }
+        ?>
+      </div>
     </div>
     <?php  
   }

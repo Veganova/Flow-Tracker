@@ -5,11 +5,6 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <?php
-      // Composer setup
-      require_once __DIR__.'/vendor/autoload.php';
-      set_include_path(get_include_path() . PATH_SEPARATOR . __DIR__."/vendor");
-      require_once "config/compile_styles.php";
-
       // Configure DB connection
       require_once 'config/db_connect.php';
 
@@ -54,6 +49,11 @@
         $url =  addQueryParameter($url, "session", $sessionId);
         header("Location: $url");
       }
+
+      // Composer setup
+      require_once __DIR__.'/vendor/autoload.php';
+      set_include_path(get_include_path() . PATH_SEPARATOR . __DIR__."/vendor");
+      require_once "config/compile_styles.php";
 
       // Own classes
       require_once 'classes/CategoryPill.php';
@@ -113,7 +113,6 @@
 
   <body>
     <div class="container">
-      
       <?php 
         insertCategoryTimedPillScripts();
         insertCategoryPillScripts();

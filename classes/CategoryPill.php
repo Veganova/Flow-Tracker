@@ -59,8 +59,34 @@
               textStatus, errorThrown
           );
       });
+    }
 
+    function addToolTip(pillId, tooltipId) {
+      const pill = document.getElementById(pillId);
+      const tooltip = document.getElementById(tooltipId);
+      Popper.createPopper(pill, tooltip, {
+        placement: 'top-end',
+        modifiers: [
+          {
+            name: 'offset',
+            options: {
+              padding: 5, // 5px from the edges of the popper
+              offset: [15, 5],
+            },
+          },
+        ],
+      });
+    }
 
+    function toggleTooltip(tooltipId) {
+      const tooltip = document.getElementById(tooltipId);
+      console.log("data-show", tooltip.getAttribute('data-show'));
+
+      if (tooltip.getAttribute('data-show')) {
+        tooltip.removeAttribute('data-show');
+      } else {
+        tooltip.setAttribute('data-show', '');
+      }
     }
   </script>
   <?php
@@ -76,20 +102,65 @@
       $this->color = $color;
     }
 
+    private function getDropdownId() {
+      return "dropdown-".$this->id;
+    }
+
+    private function getDOMId() {
+      return "pill-".$this->id;
+    }
+
+    private function getTooltipId() {
+      return "tooltip-".$this->id;
+    }
+
     private function renderContent() {
       return $this->name;
     }
 
-    public function render() {
+    public function renderPill($dropdown=false) {
       ?>
         <div 
+          id="<?= $this->getDOMId(); ?>"
           value="<?=$this->name?>"
           class="pill"
           style="background: <?= $this->color; ?>"
           onclick="addTimedPill(<?= $this->id ?>)"
         >
-          <?= $this->renderContent(); ?>
+          <div><?= $this->renderContent(); ?></div>
+          <?php if($dropdown) { ?>
+            <div id="<?= $this->getDropdownId() ?>" alt="dropdown button" class="edit-pill-dropdown" onclick="showDropDown()">
+              <?= file_get_contents("assets/dropdown.svg"); ?>
+            </div>
+          <?php } ?>
         </div>
+      <?php
+    }
+
+    public function renderTooltip() {
+      ?>
+        <!-- <div class="category-tooltip" id="<?= $this->getTooltipId() ?>" role="tooltip">
+          <div>Edit</div>
+          <div>Remove</div>
+
+          <div class="tooltip-arrow" data-popper-arrow></div>
+        </div> -->
+        <script>
+          tippy('#<?= $this->getDropdownId() ?>', {
+            content: 'My tooltip!',
+          });
+          // addToolTip('<?= $this->getDOMId();?>', '<?= $this->getTooltipId(); ?>');
+        </script>
+      <?php
+    }
+
+
+    public function render() {
+      ?>
+      <div class="single-pill-container">
+        <?= $this->renderPill(true); ?>
+        <!-- <?= $this->renderTooltip(); ?> -->
+      </div>
       <?php
     }
   }
