@@ -111,7 +111,6 @@
             this.paused = false;
             
             if (startIfInactive && !this.isActive() && this.validTimerExists()) {
-              console.log("here")
               this.startNewTimer();
             } 
 

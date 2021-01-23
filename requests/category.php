@@ -13,15 +13,6 @@
     return $stmt->fetch();
   }
 
-  function addNewSession($userId) {
-    global $pdo;
-
-    $sql = "INSERT INTO session (userId) VALUES (?)";
-    $stmt= $pdo->prepare($sql);
-    $stmt->execute([$userId]);
-    return $pdo->lastInsertId();
-  }
-
   // Returns the id of new category
   function addNewCategory($userId, $name, $color) {
     global $pdo;
@@ -34,6 +25,18 @@
     return $pdo->lastInsertId();
   }
 
+  function editCategory($id, $name, $color) {
+    global $pdo;
+    
+    $sql = "UPDATE category SET name=?, color=? WHERE id=?";
+    $stmt= $pdo->prepare($sql);
+    if (!$stmt->execute([$name, $color, $id])) {
+      echo "Edit category failed";
+      return false;
+    }
+    return true;
+  }
+
   if (isset($_POST['addCategory'])) {
     $color = $_POST['addCategory']['color'];
     $name = $_POST['addCategory']['name'];
@@ -43,4 +46,14 @@
     echo $addedCategory->render();
   }
 
+  if (isset($_POST['editCategory'])) {
+    $color = $_POST['editCategory']['color'];
+    $name = $_POST['editCategory']['name'];
+    $id = $_POST['editCategory']['id'];  
+
+    if (editCategory($id, $name, $color)) {
+      $editedCategory = new CategoryPill($id, $name, $color);
+      echo $editedCategory->render();
+    }
+  }
 ?>

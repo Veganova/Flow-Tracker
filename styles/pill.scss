@@ -3,12 +3,9 @@
 .pill-choices {
   display: flex;
   align-items: center;//flex-end;
-  min-height: 80px;
+  min-height: 48px;
   max-width: 100%;
   
-}
-
-.pill-choices2 {
   overflow-x: scroll;
   overflow-y: visible;
 
@@ -122,10 +119,26 @@
 
 .pill {
   display: flex;
-  justify-content: center;
   position: relative;
   margin-right: 10px;
   align-items: center;
+
+  .plain-input {
+    border: none;
+    caret-color: $default-foreground;
+    outline: none;
+    background-image:none;
+    background-color:transparent;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+
+    text-align: center;
+
+    &[readonly] {
+      cursor: pointer;
+    }
+  }
 
   &:last-child {
     margin-right: 0px;
@@ -160,52 +173,17 @@
 
   }
 }
-// .dropup {
-//   position: relative;
-// }
-// .dropup-content {
-//   display: none;
-//   position: absolute;
-//   background-color: #f1f1f1;
-//   min-width: 160px;
-//   bottom: 50px;
-//   z-index: 1;
-// }
 
-.category-tooltip {
+
+.tippy-box[data-theme~='light'] {
   background: $default-foreground;
   color: $background-dark;
-  padding: 5px;
-  border-radius: 4px;
 
-  .tooltip-arrow,
-  .tooltip-arrow::before {
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    z-index: -1;
-  }
+  .category-tooltip {
 
-  .tooltip-arrow::before {
-    content: '';
-    transform: rotate(45deg);
-    background: $default-foreground;
   }
+}
 
-  &[data-popper-placement^='top'] > .tooltip-arrow {
-    // bottom: -4px;
-    left: 50% !important;
-  }
-  
-  // &[data-popper-placement^='bottom'] > .tooltip-arrow {
-  //   top: -4px;
-  // }
-  
-  // &[data-popper-placement^='left'] > .tooltip-arrow {
-  //   right: -4px;
-  // }
-  
-  // &[data-popper-placement^='right'] > .tooltip-arrow {
-  //   left: -4px;
-  // }
+.tippy-box[data-placement^=top]>.tippy-arrow:before {
+  color: $default-foreground;
 }

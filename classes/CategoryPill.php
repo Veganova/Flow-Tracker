@@ -61,32 +61,73 @@
       });
     }
 
-    function addToolTip(pillId, tooltipId) {
-      const pill = document.getElementById(pillId);
-      const tooltip = document.getElementById(tooltipId);
-      Popper.createPopper(pill, tooltip, {
-        placement: 'top-end',
-        modifiers: [
-          {
-            name: 'offset',
-            options: {
-              padding: 5, // 5px from the edges of the popper
-              offset: [15, 5],
-            },
-          },
-        ],
+    function editCategory(id, name, color, pillId) {
+      let request = $.ajax({
+        url: "/requests/category.php",
+        type: "post",
+        data: {
+          editCategory: { 
+            id: id,
+            name: name, 
+            color: color
+          }
+        }
+      });
+
+      request.done(function (response, textStatus, jqXHR){
+        console.log("edited category", response);
+        $(`#${pillId}`).replaceWith(response);
+        // $("").replaceWith(response);
+        // $(".pill-choices").append(response);
+      });
+
+      request.fail(function (jqXHR, textStatus, errorThrown){
+        console.error("The following error occurred: ", textStatus, errorThrown);
       });
     }
 
-    function toggleTooltip(tooltipId) {
-      const tooltip = document.getElementById(tooltipId);
-      console.log("data-show", tooltip.getAttribute('data-show'));
+    function addNewCategory(name, color) {
+      let request = $.ajax({
+        url: "/requests/category.php",
+        type: "post",
+        data: {
+          addCategory: { 
+            name: name, 
+            color: color
+          }
+        }
+      });
 
-      if (tooltip.getAttribute('data-show')) {
-        tooltip.removeAttribute('data-show');
-      } else {
-        tooltip.setAttribute('data-show', '');
-      }
+      request.done(function (response, textStatus, jqXHR){
+        console.log("added category", response);
+        $(".pill-choices").append(response);
+      });
+
+      request.fail(function (jqXHR, textStatus, errorThrown){
+        console.error("The following error occurred: ", textStatus, errorThrown);
+      });
+    }
+
+    function addToolTip(dropdownId, tooltipId) {
+      let tooltipContent = document.getElementById(tooltipId).innerHTML;
+      tippy(`#${dropdownId}`, {
+        zIndex: 1,
+        content: tooltipContent,
+        allowHTML: true,
+        trigger: "click manual",
+        interactive: true,
+        onShown: function(instance) {
+          // Save so the tippy popup can be hidden with instance.hide()
+          document.getElementById(dropdownId).instance =  instance;
+        },
+        appendTo: () => document.body,
+        theme: 'light'
+      });
+    }
+
+    function toggleTooltip(e) {
+      e.preventDefault();
+      e.stopPropagation();
     }
   </script>
   <?php
@@ -115,7 +156,9 @@
     }
 
     private function renderContent() {
-      return $this->name;
+      ?>
+        <input class="plain-input" readonly value="<?= $this->name; ?>">
+      <?php
     }
 
     public function renderPill($dropdown=false) {
@@ -127,10 +170,10 @@
           style="background: <?= $this->color; ?>"
           onclick="addTimedPill(<?= $this->id ?>)"
         >
-          <div><?= $this->renderContent(); ?></div>
+          <?= $this->renderContent(); ?>
           <?php if($dropdown) { ?>
-            <div id="<?= $this->getDropdownId() ?>" alt="dropdown button" class="edit-pill-dropdown" onclick="showDropDown()">
-              <?= file_get_contents("assets/dropdown.svg"); ?>
+            <div id="<?= $this->getDropdownId() ?>" onclick="toggleTooltip(event)" alt="dropdown button" class="edit-pill-dropdown">
+              <?= file_get_contents($_SERVER['DOCUMENT_ROOT']."/assets/dropdown.svg"); ?>
             </div>
           <?php } ?>
         </div>
@@ -139,27 +182,30 @@
 
     public function renderTooltip() {
       ?>
-        <!-- <div class="category-tooltip" id="<?= $this->getTooltipId() ?>" role="tooltip">
-          <div>Edit</div>
-          <div>Remove</div>
-
-          <div class="tooltip-arrow" data-popper-arrow></div>
-        </div> -->
+      <div id="<?= $this->getTooltipId() ?>"  style="display: none;">
+        <div class="category-tooltip">
+          <div 
+          onclick='editCategoryModal(
+            "<?= $this->id ?>", 
+            "<?= $this->getDOMId() ?>", 
+            "<?= $this->getDropdownId() ?>",
+            "<?= $this->name ?>", 
+            "<?= $this->color ?>")'>
+            Edit
+          </div>
+          <div onclick="removeCategory(<?= $this->id ?>)">Remove</div>
+        </div>
+      </div>  
         <script>
-          tippy('#<?= $this->getDropdownId() ?>', {
-            content: 'My tooltip!',
-          });
-          // addToolTip('<?= $this->getDOMId();?>', '<?= $this->getTooltipId(); ?>');
+          addToolTip('<?= $this->getDropdownId();?>', '<?= $this->getTooltipId(); ?>');
         </script>
       <?php
     }
-
-
     public function render() {
       ?>
       <div class="single-pill-container">
         <?= $this->renderPill(true); ?>
-        <!-- <?= $this->renderTooltip(); ?> -->
+        <?= $this->renderTooltip(); ?>
       </div>
       <?php
     }

@@ -14,13 +14,15 @@ html, body{
     background: $background-dark;
     color: $default-foreground;
 
-    font-family: Roboto;
-    font-style: normal;
-
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-end;
+
+    &, input {
+      font-family: Roboto;
+      font-style: normal;
+    }
 }
 
 .container-inner {

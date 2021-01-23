@@ -31,6 +31,50 @@
     }
   }
 
+  function editCategoryModal(id, domID, dropdownId, name, color, htmlString="") {
+      let dropdownInstance = document.getElementById(dropdownId).instance;
+      dropdownInstance && dropdownInstance.hide();
+
+      console.log("edit div", document.getElementById(domID));
+      let div = document.getElementById(domID).cloneNode(true);
+      div.removeAttribute("onclick");
+      div.setAttribute("id", "temp-pill-edit");
+
+      openModal(
+        `
+        <div id="edit-modal" class="color-picker-modal">
+          <div class="color-picker-row"> 
+            ${div.outerHTML}
+            <input type="color" id="edit-color-picker" value="${color}">
+          </div>
+          <div class="confirm-button">Edit</div>
+        </div>
+        `
+      );
+
+      let modal = $(document.getElementById("edit-modal"));
+
+      let tempPill = modal.find("#temp-pill-edit").get(0);
+      let onColorChange = function(e) {
+        color = e.target.value;
+        tempPill.setAttribute("style", `background: ${color};`);
+      };
+
+      let colorPicker = modal.find("#edit-color-picker").get(0);
+      colorPicker.addEventListener("input", onColorChange, false);
+      colorPicker.addEventListener("change", onColorChange, false);
+
+      modal.find(".plain-input").removeAttr("readonly");
+      modal.find(".plain-input").focus();
+
+      let confirm = modal.find(".confirm-button").get(0);
+      confirm.addEventListener("click", () => {
+        name = modal.find(".plain-input").get(0).value;
+        editCategory(id, name, color, domID);
+        closeModal();
+      });
+    }
+
   function colorPickerModal() {
       let name = $("#search").get(0).value;
       let color = "#444444";
@@ -48,6 +92,7 @@
       div.firstChild.setAttribute("id", "temp-pill");
       div.firstChild.innerHTML = name;
 
+      
       console.log("div", name, div);
 
       openModal(
