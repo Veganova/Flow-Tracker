@@ -1,6 +1,7 @@
 <?php
-  include('../config/db_connect.php');
-  include("../classes/CategoryPill.php");
+  $ROOT = $_SERVER['DOCUMENT_ROOT'] . "/";
+  require_once $ROOT.'config/db_connect.php';
+  require_once $ROOT."classes/CategoryTimedPill.php";
 
   function getCategoryById($id) {
     global $pdo;
@@ -37,6 +38,18 @@
     return true;
   }
 
+  function deactivateCategory($id) {
+    global $pdo;
+    
+    $sql = "UPDATE category SET active=false WHERE id=?";
+    $stmt= $pdo->prepare($sql);
+    if (!$stmt->execute([$id])) {
+      echo "Deactivate category failed";
+      return false;
+    }
+    return true;
+  }
+
   if (isset($_POST['addCategory'])) {
     $color = $_POST['addCategory']['color'];
     $name = $_POST['addCategory']['name'];
@@ -54,6 +67,16 @@
     if (editCategory($id, $name, $color)) {
       $editedCategory = new CategoryPill($id, $name, $color);
       echo $editedCategory->render();
+    }
+  }
+
+  if (isset($_POST['removeCategory'])) {
+    $id = $_POST['removeCategory']['id'];  
+
+    if (deactivateCategory($id)) {
+      echo true;
+    } else {
+      echo false;
     }
   }
 ?>

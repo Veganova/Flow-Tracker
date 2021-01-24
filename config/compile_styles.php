@@ -8,7 +8,7 @@
   require_once "scssphp/scssphp/scss.inc.php";
   use ScssPhp\ScssPhp\Compiler;
   $scss = new Compiler();
-  $scss->setImportPaths('styles');
+  $scss->setImportPaths($ROOT.'styles');
 ?>
 
 <style>

@@ -30,12 +30,11 @@
       ) 
     }
 
-    
-
     function isOverflown() {
       // No pixels to scroll at bottom
       let el = $('#timed_pills_container').get(0);
       let parent = $('#timed_pills_container').parent();
+
       if (el.scrollHeight <= el.clientHeight) {
         parent.find(".border-shadows-bottom").css({"display": "none"});
         parent.find(".border-shadows-top").css({"display": "none"});
@@ -100,7 +99,9 @@
     <div class="pill-choices" style="display: flex">
         <?php
           foreach($categoryPills as $pill) {
-            echo $pill->render();
+            if ($pill->active) {
+              echo $pill->render();
+            }
           }
         ?>
     </div>
@@ -127,7 +128,9 @@
       </div>
     </div>
     <script>
-      isOverflown();
+      window.addEventListener('load', (event) => {
+        isOverflown();
+      });
     </script>
     <?php
   }

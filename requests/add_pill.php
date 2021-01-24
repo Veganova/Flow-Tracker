@@ -1,6 +1,7 @@
 <?php
-  include('../config/db_connect.php');
-  include("../classes/CategoryTimedPill.php");
+  $ROOT = $_SERVER['DOCUMENT_ROOT'] . "/";
+  require_once $ROOT.'config/db_connect.php';
+  require_once $ROOT."classes/CategoryTimedPill.php";
 
   function getCategoryById($id) {
     global $pdo;
@@ -46,8 +47,6 @@
   }
 
   if (isset($_POST["addPill"])) {    
-    
-
     $pill_category_id = $_POST["addPill"]["categoryId"];
     $session_id = $_POST["addPill"]["sessionId"];
     $category = getCategoryById($pill_category_id);

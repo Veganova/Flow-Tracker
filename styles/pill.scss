@@ -180,7 +180,16 @@
   color: $background-dark;
 
   .category-tooltip {
-
+    div {
+      font-family: Roboto;
+      cursor: pointer;
+      border-radius: 5px;
+      padding: 2px 7px;
+      &:hover, &:active {
+        background: rgb(72, 112, 177);
+        color: white;
+      }
+    }
   }
 }
 

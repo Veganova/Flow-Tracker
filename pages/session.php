@@ -5,8 +5,9 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <?php
+      $ROOT = $_SERVER['DOCUMENT_ROOT'] . "/";
       // Configure DB connection
-      require_once 'config/db_connect.php';
+      require_once $ROOT.'config/db_connect.php';
 
       function addNewSession($userId) {
         global $pdo;
@@ -51,15 +52,15 @@
       }
 
       // Composer setup
-      require_once __DIR__.'/vendor/autoload.php';
-      set_include_path(get_include_path() . PATH_SEPARATOR . __DIR__."/vendor");
-      require_once "config/compile_styles.php";
+      require_once $ROOT.'vendor/autoload.php';
+      set_include_path(get_include_path() . PATH_SEPARATOR . $ROOT."vendor");
+      require_once $ROOT."config/compile_styles.php";
 
       // Own classes
-      require_once 'classes/CategoryPill.php';
-      require_once 'classes/CategoryTimedPill.php';
-      require_once 'templates/active_session.php';
-      require_once 'component/modal.php';
+      require_once $ROOT.'classes/CategoryPill.php';
+      require_once $ROOT.'classes/CategoryTimedPill.php';
+      require_once $ROOT.'templates/active_session.php';
+      require_once $ROOT.'component/modal.php';
 
       function findCategoryById($categoryId, $categoryPills) {
         foreach($categoryPills as $categoryPill) {
@@ -74,7 +75,7 @@
       function loadExistingSession($sessionId, $categoryPills) {
         global $pdo;
 
-        $sql = 'SELECT * FROM activity where sessionId = :sessionId';
+        $sql = 'SELECT * FROM activity WHERE sessionId = :sessionId';
         $stmt = $pdo->prepare($sql);
         $stmt->execute(['sessionId' => $sessionId]);
         $timedPillsRaw = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -102,7 +103,8 @@
         $categoryPills[] = new CategoryPill(
           $categoryPillRaw['id'], 
           $categoryPillRaw['name'], 
-          $categoryPillRaw['color']
+          $categoryPillRaw['color'],
+          $categoryPillRaw['active']
         );
       }
 

@@ -27,7 +27,7 @@
         data["updateActivity"] = {
           startTime: new Date(activeTimer.start).toISOString(),
           endTime: new Date(Date.now()).toISOString(),
-          duration: activeTimer.duration,
+          duration: activeTimer.getDuration(),
           id: activeTimer.instance.parent().attr("id")
         };
       }
@@ -74,11 +74,33 @@
         }
       });
 
-      request.done(function (response, textStatus, jqXHR){
-        console.log("edited category", response);
+      request.done(function (response, textStatus, jqXHR) {
         $(`#${pillId}`).replaceWith(response);
-        // $("").replaceWith(response);
-        // $(".pill-choices").append(response);
+      });
+
+      request.fail(function (jqXHR, textStatus, errorThrown){
+        console.error("The following error occurred: ", textStatus, errorThrown);
+      });
+    }
+
+    function removeCategory(id, pillID, dropdownId) {
+      let dropdownInstance = document.getElementById(dropdownId).instance;
+      dropdownInstance && dropdownInstance.hide();
+
+      let request = $.ajax({
+        url: "/requests/category.php",
+        type: "post",
+        data: {
+          removeCategory: { 
+            id: id
+          }
+        }
+      });
+
+      request.done(function (response, textStatus, jqXHR) {
+        if (response) {
+          $(`#${pillID}`).remove()
+        }
       });
 
       request.fail(function (jqXHR, textStatus, errorThrown){
@@ -137,10 +159,11 @@
 
   // Once clicked will add timed pills to the page
   class CategoryPill implements iDrawable {
-    public function __construct($id, $name, $color) {
+    public function __construct($id, $name, $color, $active=true) {
       $this->id = $id;
       $this->name = $name;
       $this->color = $color;
+      $this->active = $active;
     }
 
     private function getDropdownId() {
@@ -193,7 +216,7 @@
             "<?= $this->color ?>")'>
             Edit
           </div>
-          <div onclick="removeCategory(<?= $this->id ?>)">Remove</div>
+          <div onclick="removeCategory('<?= $this->id ?>', '<?= $this->getDOMId() ?>', '<?= $this->getDropdownId() ?>')">Remove</div>
         </div>
       </div>  
         <script>

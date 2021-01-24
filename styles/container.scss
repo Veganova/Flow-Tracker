@@ -20,7 +20,7 @@ html, body{
     justify-content: flex-end;
 
     &, input {
-      font-family: Roboto;
+      font-family: Roboto !important;
       font-style: normal;
     }
 }
