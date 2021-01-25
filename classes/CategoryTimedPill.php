@@ -3,36 +3,67 @@
 ?>
   
   <script>
-    function removeTimedPill(pillId) {
+    function removeTimedPill(activityId) {
       let request = $.ajax({
-        url: "/requests/remove_pill.php",
+        url: "/requests/pill.php",
         type: "post",
-        data: { removePill: pillId }
+        data: { 
+          removeActivity: {
+            id: activityId 
+          }
+        }
       })
 
       request.done(function (response, textStatus, jqXHR){
-          if (typeof activeTimer !== 'undefined') {
-            // the variable is defined
-            clearInterval(activeTimer.intervalTimer);
-          } 
-          
-          // $("#pause").css({"display": "block"});
-          
-
-          $(container).remove();
-          container.dispatchEvent(new CustomEvent('scroll'));
-
-          startNewTimer();
+        if (response) {
+          let containerId = "activity-" + activityId;
+          $("#"+containerId).remove();
+          if (activeTimer.getActivityId() === parseInt(activityId)) {
+            activeTimer.clearTimer();
+            // activeTimer.startNewTimer();
+          }
+        }
       });
 
-      // Callback handler that will be called on failure
       request.fail(function (jqXHR, textStatus, errorThrown){
-          // Log the error to the console
-          console.error(
-              "The following error occurred: "+
-              textStatus, errorThrown
-          );
+          console.error( "The following error occurred: "+textStatus, errorThrown);
       });
+    }
+
+    function formatDuration(totalSeconds, showSeconds=true) {
+      const hours = Math.floor(totalSeconds / 3600);
+      totalSeconds %= 3600;
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+
+      let result = ("0" + hours).slice(-2) + ":" + ("0" + minutes).slice(-2);
+      if (showSeconds) {
+        result +=  ":" + ("0" + seconds).slice(-2);
+      }
+
+      return result;
+    }
+
+    function formatTime(date=null) {
+      date = date ? new Date(date) : new Date();
+      let options = { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+
+      return date.toLocaleDateString("en-US", options);
+    }
+
+    function hideAllButLastTime() {
+      // Last container's time and cancel will be always visible
+      $(".activity-container").find(".toggle-click").hide();
+      $(".activity-container").last().find(".toggle-click").css({display: "flex"});
+    }
+
+    function showCancelAndTime(containerId) {
+      let container = $("#"+containerId);
+      if (container.find(".cancel:visible").length > 0) {
+        container.find(".toggle-click").hide();
+      } else {
+        container.find(".toggle-click").css({display: "flex"});
+      }
     }
   </script>
 <?php
@@ -51,33 +82,60 @@
       $this->duration = $duration;
     }
 
-    private function formatDuration() {
-      $totalSeconds = $this->duration;
-      $hours = sprintf('%02d', floor($totalSeconds / 3600));
-      $totalSeconds %= 3600;
-      $minutes = sprintf('%02d', floor($totalSeconds / 60));
-      $seconds = sprintf('%02d', $totalSeconds % 60);
-      
-      return "$hours:$minutes:$seconds";
+    private function getContainerId() {
+      return "activity-".$this->activityId;
+    }
+
+    
+    private function insertTime() {
+      $epoch = $this->endTime ? strtotime($this->endTime) * 1000 : null;
+      ?>
+      <script>
+        $("#<?= $this->getContainerId() ?>").find(".full-time").html(
+          formatTime(<?= $epoch ?>)
+        );
+      </script>
+      <?php
+    }
+
+    private function insertActivityDuration() {
+      ?>
+      <script>
+        $("#<?= $this->getContainerId() ?>").find(".timer").html(
+          formatDuration(<?= $this->duration ?>, true)
+        );
+      </script>
+      <?php
     }
 
     private function renderContent() {
       ?> 
       <span><?= $this->name ?></span>
-      <span duration="<?= $this->duration ?>" class="timer"><?= $this->formatDuration() ?></span>
+      <span activityId="<?= $this->activityId ?>" duration="<?= $this->duration ?>" class="timer">0:00:00</span>
       <?php
     }
 
     public function render() {
+      global $ROOT;
       ?>
-        <div 
-          id="<?= $this->activityId ?>"
-          class="pill-timed"
-          style="background: <?= $this->color; ?>"
-        >
-          <?= $this->renderContent(); ?>
+        <div id="<?= $this->getContainerId() ?>" class="activity-container">
+          <div class="pill-row">
+            <div class="pill-timed" style="background: <?= $this->color; ?>" onclick="showCancelAndTime('<?= $this->getContainerId() ?>')">
+              <?= $this->renderContent(); ?>
+            </div>
+            <div class="cancel toggle-click" onclick="removeTimedPill('<?= $this->activityId ?>')">
+              <?= file_get_contents($ROOT."assets/cancel.svg"); ?>
+            </div>
+          </div>
+          <div class="full-time-container toggle-click">
+            <hr>
+            <div class="full-time"></div>
+          </div>
         </div>
       <?php
+      $this->insertActivityDuration();
+      $this->insertTime();
+      ?><script>hideAllButLastTime();</script><?php
     }
   }
 
@@ -93,6 +151,12 @@
           paused: false,
           pauseStart: null,
           instance: null,
+          getActivityId: function() {
+            return this.instance ? parseInt(this.instance.attr("activityId")) : -1;
+          },
+          getContainerId: function() {
+            return "activity-" + this.getActivityId();
+          },
           validTimerExists: function() {
             return $(".timer").length > 0
           },
@@ -130,13 +194,6 @@
               $("#pause").css({"display": "none"});
             }
           },
-          formatDate: function (totalSeconds) {
-            const hours = Math.floor(totalSeconds / 3600);
-            totalSeconds %= 3600;
-            const minutes = Math.floor(totalSeconds / 60);
-            const seconds = totalSeconds % 60;
-            return ("0" + hours).slice(-2) + ":" + ("0" + minutes).slice(-2) + ":" + ("0" + seconds).slice(-2);
-          },
           isActive: function() {
             return this.instance && this.instance.length;
           },
@@ -144,6 +201,7 @@
             if(this.isActive()) {
               clearInterval(this.intervalTimer);
               this.instance = null;
+              this.pause();
             }
           },
           getDuration: function() {
@@ -152,7 +210,8 @@
           updateTime: function() {
             if (!this.paused) {
               let duration = this.getDuration();
-              this.instance.html(this.formatDate(duration));
+              this.instance.html(formatDuration(duration));
+              $("#" + this.getContainerId()).find(".full-time").html(formatTime());
             }
           },
           startNewTimer: function() {
@@ -163,6 +222,8 @@
             this.start = Date.now();
             this.totalPauseDuration = 0;
             this.startDuration = parseInt(this.instance.attr("duration")) || 0;
+
+            hideAllButLastTime();
 
             // Scroll new timer into view
             $('#timed_pills_container').animate({
@@ -175,22 +236,24 @@
           updateTimePill: function(callback) {
             if(this.isActive()) {
               let request = $.ajax({
-                url: "/requests/add_pill.php",
+                url: "/requests/pill.php",
                 type: "post",
                 data: {
                   updateActivity: {
                     startTime: new Date(this.start).toISOString(),
                     endTime: new Date(Date.now()).toISOString(),
                     duration: this.getDuration(),
-                    id: this.instance.parent().attr("id")
+                    id: this.getActivityId()
                   }
                 }
               });
 
-              request.done(function (response, textStatus, jqXHR){
+              request.done((response, textStatus, jqXHR) => {
                 console.log("Updated the active timer!", response);
                 callback();
               });
+            } else {
+              callback();
             }
           }
         }

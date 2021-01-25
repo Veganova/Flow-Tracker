@@ -68,9 +68,8 @@
 }
 
 .scrolling-pills {
-  // display: flex;
-  // flex-direction: column;
-  // justify-content: center;
+  // To keep the pill column from shifting when the cancel button is toggled
+  min-width: 210px; 
   height: 100%; 
   overflow: scroll;
 
@@ -105,9 +104,6 @@
 .pill, .pill-timed {
   color: black;
   cursor: pointer;
-
-  width: 180px;
-  min-width: 180px;
   height: 29px;
   line-height: 29px;
   border-radius: 19px;
@@ -117,11 +113,19 @@
   position: relative;
 }
 
+.pill-timed { 
+  width: 180px;
+  min-width: 180px;
+}
+
 .pill {
   display: flex;
   position: relative;
   margin-right: 10px;
   align-items: center;
+  justify-content: center;
+  width: 100px;
+  min-width: 100px;
 
   .plain-input {
     border: none;
@@ -137,18 +141,12 @@
 
     &[readonly] {
       cursor: pointer;
+      pointer-events: none;
     }
   }
 
   &:last-child {
     margin-right: 0px;
-  }
-}
-
-.pill-timed {
-  margin-bottom: 10px;
-  &:last-child{
-    margin-bottom: 0px;
   }
 }
 
@@ -195,4 +193,53 @@
 
 .tippy-box[data-placement^=top]>.tippy-arrow:before {
   color: $default-foreground;
+}
+
+
+// activity (timed-pill)
+.activity-container {
+  margin-bottom: 10px;
+  &:last-child{
+    margin-bottom: 0px;
+  }
+
+  .pill-row {
+    display: flex;
+    align-items: center;
+
+    .cancel {
+      display: flex;
+      cursor: pointer; 
+      margin-left: 9px;
+      svg {
+        width: 21px;
+        height: 21px;
+      }
+    }
+  }
+
+  .full-time-container {
+    margin-top: 4px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    hr {
+      border: none;
+      flex-grow:1;
+      height: 0.25px;
+      background-color: $secondary-foreground;
+    }
+
+    .full-time {
+      padding-left: 2px;
+      flex-grow: 0;
+      color: $secondary-foreground;
+      font-size: 9px;
+    }
+  }
+
+  .toggle-click {
+    display: none;
+  }
 }

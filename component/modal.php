@@ -123,6 +123,21 @@
         closeModal();
       });
     }
+
+    function confirmActionModal(dropdownId, confirmCallback) {
+      let dropdownInstance = document.getElementById(dropdownId).instance;
+      dropdownInstance && dropdownInstance.hide();
+      openModal(
+        `
+        <div class="confirm-action-modal">
+          <div class="question">Are you sure?</div>
+          <div class="accept-button">Yes</div>
+          <div class="reject-button" onclick="${confirmCallback}">No</div>
+        </div>
+        `
+      );
+    }
+
   </script>
 <?php
   }

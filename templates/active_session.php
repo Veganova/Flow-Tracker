@@ -57,8 +57,9 @@
       let l = searchTerm.length;
       $(".add-pill-choice").css({"display": l > 0 ? "block" : "none"}); 
 
-      for(let childRaw of $(".pill-choices").children()) {
-        let child = $(childRaw.getElementsByClassName("pill")[0]);
+      for(let childRaw of $(".pill-choices").find(".pill")) {//children()) {
+        // let child = $(childRaw).find(".pill")[0];
+        let child = $(childRaw);
         if (child.attr("value").toLowerCase().substring(0, l) === searchTerm) {
           child.css({"display": "flex"});
         } else {

@@ -23,7 +23,7 @@
 .modal-content {
   position: fixed;
   bottom: 10px;
-  background-color: rgb(255,255,255, 0.8);
+  background: rgb(255 250 236);
   width: 300px;
   // width: 50%;
   -webkit-animation-name: slideIn;
@@ -99,16 +99,17 @@
   }
 
   .confirm-button {
-    background: #bb4963;
+    background: #b1b1b1;;
     border-radius: 4px;
     padding: 3px 8px;
     cursor: pointer;
-    width: 125px;
+    width: 85px;
     text-align: center;
     margin: 10px auto 0 auto;
   }
 
   .color-picker-row {
     display: flex;
+    justify-content: center;
   }
 }

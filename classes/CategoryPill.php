@@ -13,7 +13,8 @@
 
     function addTimedPill(pillId) {
       console.log("adding timed pill", pillId);
-      let container = document.getElementById("timed_pills_container");
+      activeTimer.updateTimePill(() => {
+        let container = document.getElementById("timed_pills_container");
 
       const data = { 
         addPill: {
@@ -21,19 +22,8 @@
           sessionId: new URLSearchParams(window.location.search).get("session"),
         }
       }
-
-      if(activeTimer.isActive()) {
-        // the variable is defined
-        data["updateActivity"] = {
-          startTime: new Date(activeTimer.start).toISOString(),
-          endTime: new Date(Date.now()).toISOString(),
-          duration: activeTimer.getDuration(),
-          id: activeTimer.instance.parent().attr("id")
-        };
-      }
-
       let request = $.ajax({
-        url: "/requests/add_pill.php",
+        url: "/requests/pill.php",
         type: "post",
         data: data
       })
@@ -59,6 +49,7 @@
               textStatus, errorThrown
           );
       });
+      });
     }
 
     function editCategory(id, name, color, pillId) {
@@ -83,29 +74,31 @@
       });
     }
 
-    function removeCategory(id, pillID, dropdownId) {
-      let dropdownInstance = document.getElementById(dropdownId).instance;
-      dropdownInstance && dropdownInstance.hide();
+    function removeCategoryFunc(id, pillID, dropdownId) {
+      return () => {
+        let dropdownInstance = document.getElementById(dropdownId).instance;
+        dropdownInstance && dropdownInstance.hide();
 
-      let request = $.ajax({
-        url: "/requests/category.php",
-        type: "post",
-        data: {
-          removeCategory: { 
-            id: id
+        let request = $.ajax({
+          url: "/requests/category.php",
+          type: "post",
+          data: {
+            removeCategory: { 
+              id: id
+            }
           }
-        }
-      });
+        });
 
-      request.done(function (response, textStatus, jqXHR) {
-        if (response) {
-          $(`#${pillID}`).remove()
-        }
-      });
+        request.done(function (response, textStatus, jqXHR) {
+          if (response) {
+            $(`#${pillID}`).remove()
+          }
+        });
 
-      request.fail(function (jqXHR, textStatus, errorThrown){
-        console.error("The following error occurred: ", textStatus, errorThrown);
-      });
+        request.fail(function (jqXHR, textStatus, errorThrown){
+          console.error("The following error occurred: ", textStatus, errorThrown);
+        });
+      }
     }
 
     function addNewCategory(name, color) {
@@ -121,7 +114,7 @@
       });
 
       request.done(function (response, textStatus, jqXHR){
-        console.log("added category", response);
+        // console.log("added category", response);
         $(".pill-choices").append(response);
       });
 
@@ -184,7 +177,9 @@
       <?php
     }
 
+    // $realpage -> not a demo render
     public function renderPill($dropdown=false) {
+      global $ROOT;
       ?>
         <div 
           id="<?= $this->getDOMId(); ?>"
@@ -196,7 +191,7 @@
           <?= $this->renderContent(); ?>
           <?php if($dropdown) { ?>
             <div id="<?= $this->getDropdownId() ?>" onclick="toggleTooltip(event)" alt="dropdown button" class="edit-pill-dropdown">
-              <?= file_get_contents($_SERVER['DOCUMENT_ROOT']."/assets/dropdown.svg"); ?>
+              <?= file_get_contents($ROOT."assets/dropdown.svg"); ?>
             </div>
           <?php } ?>
         </div>
@@ -216,7 +211,9 @@
             "<?= $this->color ?>")'>
             Edit
           </div>
-          <div onclick="removeCategory('<?= $this->id ?>', '<?= $this->getDOMId() ?>', '<?= $this->getDropdownId() ?>')">Remove</div>
+        <div onclick="confirmActionModal('<?= $this->getDropdownId() ?>', removeCategory('<?= $this->id ?>', '<?= $this->getDOMId() ?>', '<?= $this->getDropdownId() ?>'))">
+            Remove
+          </div>
         </div>
       </div>  
         <script>

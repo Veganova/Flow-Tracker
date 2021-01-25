@@ -75,7 +75,7 @@
       function loadExistingSession($sessionId, $categoryPills) {
         global $pdo;
 
-        $sql = 'SELECT * FROM activity WHERE sessionId = :sessionId';
+        $sql = 'SELECT * FROM activity where sessionId=:sessionId ORDER BY endTime IS NULL, endTime ASC';
         $stmt = $pdo->prepare($sql);
         $stmt->execute(['sessionId' => $sessionId]);
         $timedPillsRaw = $stmt->fetchAll(PDO::FETCH_ASSOC);

@@ -1,6 +1,7 @@
 <?php
-  include('../config/db_connect.php');
-  include("../templates/active_session.php");
+  $ROOT = $_SERVER['DOCUMENT_ROOT'] . "/";
+  require_once $ROOT.'config/db_connect.php';
+  require_once $ROOT."templates/active_session.php";
 
   function toggleSaveStatus($sessionId) {
     global $pdo;

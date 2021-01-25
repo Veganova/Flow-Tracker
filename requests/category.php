@@ -1,7 +1,7 @@
 <?php
   $ROOT = $_SERVER['DOCUMENT_ROOT'] . "/";
   require_once $ROOT.'config/db_connect.php';
-  require_once $ROOT."classes/CategoryTimedPill.php";
+  require_once $ROOT."classes/CategoryPill.php";
 
   function getCategoryById($id) {
     global $pdo;
