@@ -1,0 +1,76 @@
+@import "colors";
+
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  background: $secondary-background;
+  padding: 30px 45px;
+  box-shadow: 2px 2px 2px 1px black;
+
+  color: $default-foreground;
+  
+  form, .form-element {
+    width: 100%
+  }
+
+  .form-title {
+    text-align: center;
+    letter-spacing: 0.055em;
+    font-variant: small-caps;
+    text-transform: lowercase;
+    font-weight: bold;
+    font-size: 32px;
+    padding-bottom: 20px;
+  }
+
+  .input-label {
+    font-weight: bold;
+    padding-bottom: 4px;
+    font-size: 13px;
+  }
+
+  .text-input {
+    text-align: start;
+    color: $default-foreground; 
+    border: 1px solid $secondary-foreground;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 5px;
+  }
+
+  .has-error {
+    .text-input {
+      border-color: $error-red; 
+    }
+  }
+
+  .help-block {
+    color: $error-red;
+    font-size: 11px;
+    margin-bottom: 10px;
+  }
+
+  .submit-button {
+    cursor: pointer;
+    background: $secondary-foreground;
+    color: $background-dark;
+
+    letter-spacing: 0.055em;
+    font-variant: small-caps;
+    text-transform: lowercase;
+    
+    border: none;
+    border-radius: 8px;
+
+    width: 100%;
+    padding: 8px;
+    font-size: 15px;
+
+    &:hover {
+      background: $default-foreground;
+    }
+  }
+}

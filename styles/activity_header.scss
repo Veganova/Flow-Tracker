@@ -27,25 +27,13 @@
     line-height: 28px;
     letter-spacing: 0.055em;
     font-variant: small-caps;
+    text-transform: lowercase;
     font-feature-settings: 'cp';
 
     position: fixed;
     width: 100%;
     text-align: center;
     z-index: -1;
-  }
-
-  .save {
-    padding: 3.5px 10px;
-    border-radius: 3px;
-    border: solid 1px $default-foreground;
-
-    &:hover, &:active {
-      color: $background-dark;
-      background: $default-foreground;
-    }
-
-    cursor: pointer;
   }
 }
 

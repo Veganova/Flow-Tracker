@@ -6,7 +6,7 @@
       activeTimer.updateTimePill(
         () => {
           let request = $.ajax({
-            url: "/requests/save_session.php",
+            url: "/requests/session.php",
             type: "post",
             data: {
               saveSession: {
@@ -74,7 +74,7 @@
   function render_save($session) {
     $text = $session["draft"] ? "Save" : "Unsave";
     ?> 
-    <div id="save" onclick="saveSession(<?= $session['id'] ?>, <?= $session['draft'] ?>)" class="save"><?= $text ?></div> 
+    <div id="save" onclick="saveSession(<?= $session['id'] ?>, <?= $session['draft'] ?>)" class="border-button"><?= $text ?></div> 
     <?php
   }
 

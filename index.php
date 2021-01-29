@@ -1,24 +1,27 @@
 
+<?php
+  // Initialize the session
+  require_once "config/header.php";
+  
+  require_once "templates/nav_bar.php";
+?>
+
 <!DOCTYPE html>
 
 <html>
   <head>
     <?php
-      $ROOT = $_SERVER['DOCUMENT_ROOT'] . "/";
-      // Composer setup
-      require_once __DIR__.'/vendor/autoload.php';
-      set_include_path(get_include_path() . PATH_SEPARATOR . __DIR__."/vendor");
-      include("config/compile_styles.php");
-
-      // Configure DB connection
-      include('config/db_connect.php');
+      require_once $ROOT."config/compile_styles.php";
     ?>
   </head>
   
 
   <body>
     <div class="container">
-      <a href="pages/session.php">New Session </a>
+      <?= renderNavBar() ?>
+      <div class="plain-container">
+        <a class="bg-button new-session" href="/pages/session.php">+ <span>New Session</span></a>
+      </div>
     </div>
   </body>
 </html>

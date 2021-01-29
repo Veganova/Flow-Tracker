@@ -1,16 +1,23 @@
 <?php
-  $ROOT = $_SERVER['DOCUMENT_ROOT'] . "/";
-  require_once $ROOT.'config/db_connect.php';
+  require_once '../config/header.php';
+
   require_once $ROOT."classes/CategoryTimedPill.php";
 
+    
+  if (isLoggedIn()) {
+    $userId = $_SESSION["userId"];
+  } else {
+    exit("No user logged in!");
+  }
+
   function getCategoryById($id) {
-    global $pdo;
+    global $pdo, $userId;
 
     // Prepared statement to prevent SQL injection
-    $sql = 'SELECT * FROM category where id = :id';
+    $sql = 'SELECT * FROM category where id = :id AND userId = :userId';
     $stmt = $pdo->prepare($sql);
     $stmt->setFetchMode(PDO::FETCH_OBJ); 
-    $stmt->execute(['id' => $id]);
+    $stmt->execute(['id' => $id, 'userId' => $userId]);
     return $stmt->fetch();
   }
 
@@ -28,13 +35,13 @@
   }
 
   function getCategoryByActivityId($id) {
-    global $pdo;
+    global $pdo, $userId;
 
     // Prepared statement to prevent SQL injection
-    $sql = 'SELECT * FROM category where id = (SELECT categoryId FROM activity where id = :id)';
+    $sql = 'SELECT * FROM category where userId = :userId AND id = (SELECT categoryId FROM activity where id = :id)';
     $stmt = $pdo->prepare($sql);
     $stmt->setFetchMode(PDO::FETCH_OBJ); 
-    if (!$stmt->execute(['id' => $id])) {
+    if (!$stmt->execute(['userId' => $userId, 'id' => $id])) {
       echo "Failed to get id";
     }
     return $stmt->fetch();

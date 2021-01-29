@@ -153,10 +153,10 @@
   // Once clicked will add timed pills to the page
   class CategoryPill implements iDrawable {
     public function __construct($id, $name, $color, $active=true) {
-      $this->id = $id;
-      $this->name = $name;
-      $this->color = $color;
-      $this->active = $active;
+      $this->id = htmlspecialchars($id);
+      $this->name = htmlspecialchars($name);
+      $this->color = htmlspecialchars($color);
+      $this->active = htmlspecialchars($active);
     }
 
     private function getDropdownId() {

@@ -1,0 +1,27 @@
+@import "colors";
+
+.profile {
+  .profile-info-row{
+    margin-bottom: 10px;
+
+    .property-type {
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+  }
+
+  .logout {
+    cursor: pointer;
+    text-align: center;
+    color: $error-red;
+    border-radius: 4px;
+    padding: 2px;
+    text-decoration: none;
+
+    &:hover, &:active {
+      color: $default-foreground;
+      background: $error-red;
+    }
+  }
+}

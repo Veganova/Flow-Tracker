@@ -1,0 +1,83 @@
+@import "colors";
+
+.nav-bar {
+  display: flex;
+  box-sizing: border-box;
+  align-items: center;
+  padding: 10px;
+
+  div, a {
+    flex-grow: 0;
+  }
+
+  .filler {
+    flex-grow: 1;
+  }
+
+  .page-name {
+    color: $default-foreground;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 40px;
+    // line-height: 28px;
+    letter-spacing: 0.055em;
+    font-variant: small-caps;
+    text-transform: lowercase;
+
+    position: relative;
+    &:hover {
+      color: $default-foreground;
+    }
+
+    &::before {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      bottom: 0px;
+      left: 0;
+      background-color: $default-foreground;
+      visibility: hidden;
+      transform: scaleX(0);
+      transition: all 0.15s ease-in-out 0s;
+    }
+
+    &:hover::before {
+      visibility: visible;
+      transform: scaleX(1);
+    }
+  }
+
+  .nav-el {
+    margin-left: 12px;
+  }
+  
+  .nav-img {
+    display: flex;
+    flex-direction: column;
+    svg {
+      border-radius: 100%;
+      padding: 3px;
+      width: 28px;
+      height: 28px;
+      &:hover {
+        path {
+          fill: $background-dark;
+        }
+        background: $default-foreground;
+      }
+    }
+  
+    
+  }
+  
+  .profile-icon {
+    svg {
+      border: 3px solid $default-foreground;
+      border-radius: 100%;
+      width: 30px;
+      height: 30px;
+    }
+  }
+}
+

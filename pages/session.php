@@ -1,3 +1,10 @@
+<?php
+  require_once "../config/header.php";
+  if (!isLoggedIn()) {
+    header("location: login.php");
+  }
+  $userId = $_SESSION['userId'];
+?>
 
 <!DOCTYPE html>
 
@@ -5,12 +12,10 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <?php
-      $ROOT = $_SERVER['DOCUMENT_ROOT'] . "/";
-      // Configure DB connection
-      require_once $ROOT.'config/db_connect.php';
-
-      function addNewSession($userId) {
-        global $pdo;
+      require_once "../config/header.php";
+      
+      function addNewSession() {
+        global $pdo, $userId;
 
         $sql = "INSERT INTO session (userId) VALUES (?)";
         $stmt= $pdo->prepare($sql);
@@ -34,9 +39,9 @@
       $createNewSession = !isset($_GET['session']);
       if (isset($_GET['session'])) {
         $sessionId = $_GET['session'];
-        $sql = 'SELECT * FROM session where id = :id';
+        $sql = 'SELECT * FROM session WHERE id = :id AND userId = :userId';
         $stmt = $pdo->prepare($sql);
-        $stmt->execute(['id' => $sessionId]);
+        $stmt->execute(['id' => $sessionId, 'userId' => $userId]);
         $session = $stmt->fetch(PDO::FETCH_ASSOC);;
         if (!$session) {
           $createNewSession = true;
@@ -46,14 +51,13 @@
       if ($createNewSession) {
         $url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
         // If no session Id provided, create a new session
-        $sessionId = addNewSession(123);
+        $sessionId = addNewSession();
         $url =  addQueryParameter($url, "session", $sessionId);
+        // exit("session created: ".$sessionId);
         header("Location: $url");
       }
 
-      // Composer setup
-      require_once $ROOT.'vendor/autoload.php';
-      set_include_path(get_include_path() . PATH_SEPARATOR . $ROOT."vendor");
+      // Composer/Styles setup
       require_once $ROOT."config/compile_styles.php";
 
       // Own classes
@@ -96,7 +100,7 @@
         return $timedPills;
       }
 
-      $stmt = $pdo->query('SELECT * FROM category'); # TODO where userId = **
+      $stmt = $pdo->query("SELECT * FROM category where userId=$userId"); 
       $categoryPillsRaw = $stmt->fetchAll(PDO::FETCH_ASSOC);
       $categoryPills = [];
       foreach($categoryPillsRaw as $categoryPillRaw) {
@@ -114,7 +118,7 @@
   
 
   <body>
-    <div class="container">
+    <div class="container session-container">
       <?php 
         insertCategoryTimedPillScripts();
         insertCategoryPillScripts();

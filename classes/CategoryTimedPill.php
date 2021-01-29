@@ -74,12 +74,14 @@
   class CategoryTimedPill {
 
     public function __construct($activityId, $name, $color, $startTime, $endTime, $duration) {
-      $this->activityId = $activityId;
-      $this->name = $name;
-      $this->color = $color;
-      $this->startTime = $startTime;
-      $this->endTime = $endTime;
-      $this->duration = $duration;
+      // Timezone
+      date_default_timezone_set('UTC');
+      $this->activityId = htmlspecialchars($activityId);
+      $this->name = htmlspecialchars($name);
+      $this->color = htmlspecialchars($color);
+      $this->startTime = htmlspecialchars($startTime);
+      $this->endTime = htmlspecialchars($endTime);
+      $this->duration = htmlspecialchars($duration);
     }
 
     private function getContainerId() {

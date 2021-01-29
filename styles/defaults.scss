@@ -1,0 +1,35 @@
+@import "colors";
+
+a {
+  color: $link-color;
+}
+
+.border-button {
+  padding: 3.5px 10px;
+  border-radius: 3px;
+  border: solid 1px $default-foreground;
+  color: $default-foreground;
+  text-decoration: none;
+
+  &:hover, &:active {
+    color: $background-dark;
+    background: $default-foreground;
+  }
+
+  cursor: pointer;
+}
+
+.bg-button {
+  color: $background-dark;
+  padding: 3.5px 10px;
+  border-radius: 3px;
+  background: $default-foreground;
+  text-decoration: none;
+
+  &:hover, &:active {
+    color: black;
+    background: $default-foreground;
+  }
+
+  cursor: pointer;
+}
