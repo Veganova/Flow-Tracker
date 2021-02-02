@@ -13,7 +13,6 @@
   function getCategoryById($id) {
     global $pdo, $userId;
 
-    // Prepared statement to prevent SQL injection
     $sql = 'SELECT * FROM category where id = :id AND userId = :userId';
     $stmt = $pdo->prepare($sql);
     $stmt->setFetchMode(PDO::FETCH_OBJ); 
@@ -24,7 +23,6 @@
   function removeActivity($id) {
     global $pdo;
 
-    // Prepared statement to prevent SQL injection
     $sql = 'DELETE FROM activity where id = :id';
     $stmt = $pdo->prepare($sql);
     if (!$stmt->execute(['id' => $id])) {
@@ -32,6 +30,16 @@
       return false;
     }
     return true;
+  }
+
+  function updateActivitySessionTime($activityId) {
+    global $pdo, $userId;
+
+    $sql = 'UPDATE session SET updated_at=now() WHERE userId = ? AND id = (SELECT sessionId FROM activity where id = ?)';
+    $stmt = $pdo->prepare($sql);
+    if (!$stmt->execute([$userId, $activityId])) {
+      exit("Failed to update session");
+    }
   }
 
   function getCategoryByActivityId($id) {
@@ -54,7 +62,7 @@
     $sql = "INSERT INTO activity (sessionId, categoryId, duration) VALUES (?, ?, 0)";
     $stmt= $pdo->prepare($sql);
     if (!$stmt->execute([$session_id, $pill_category_id])) {
-      echo "Add new activity failed";
+      exit("Add new activity failed");
     }
     return $pdo->lastInsertId();
   }
@@ -67,7 +75,10 @@
 
     if (!$stmt->execute([$startTime, $endTime, $duration, $id])) {
       echo "Update activity failed";
+      return false;
     }
+
+    return true;
   }
 
   if (isset($_POST["updateActivity"])) {
@@ -76,18 +87,9 @@
     $startTime = (new DateTime($U["startTime"]))->format('Y-m-d H:i:s');
     $endTime = (new DateTime($U["endTime"]))->format('Y-m-d H:i:s');
 
-    updateActivity($startTime, $endTime, $U["duration"], $U["id"]);
-    
-    // $category = getCategoryByActivityId($U["id"]);
-    // $activity = new CategoryTimedPill(
-    //   $U["id"], 
-    //   $category->name, 
-    //   $category->color, 
-    //   $startTime, 
-    //   $endTime, 
-    //   $U["duration"]
-    // );
-    // echo $activity->render();    
+    if (updateActivity($startTime, $endTime, $U["duration"], $U["id"])) {
+      updateActivitySessionTime($U["id"]);
+    }
   }
 
   if (isset($_POST["addPill"])) {    
@@ -95,13 +97,14 @@
     $session_id = $_POST["addPill"]["sessionId"];
     $category = getCategoryById($pill_category_id);
     $activityId = addNewActivity($session_id, $pill_category_id);
-
+    updateActivitySessionTime($activityId);
     $activity = new CategoryTimedPill($activityId, $category->name, $category->color, "0", "0", 0);
     echo $activity->render();    
   }
 
   if (isset($_POST["removeActivity"])) {    
     $activityId = $_POST["removeActivity"]["id"];
+    updateActivitySessionTime($activityId);
     echo removeActivity($activityId);
   }
 
