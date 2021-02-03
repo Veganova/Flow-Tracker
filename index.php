@@ -19,9 +19,13 @@
   <body>
     <div class="container">
       <?= renderNavBar() ?>
-      <div class="plain-container">
-        <a class="bg-button new-session" href="/pages/session.php">+ <span>New Session</span></a>
-      </div>
+
+      <?php if(isLoggedIn()) { ?>
+        <div class="plain-container">
+          <a class="bg-button new-session" href="/pages/session.php">+ <span>New Session</span></a>
+        </div>
+      <?php } ?>
+     
     </div>
   </body>
 </html>

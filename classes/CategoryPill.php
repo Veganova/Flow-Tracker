@@ -74,7 +74,7 @@
       });
     }
 
-    function removeCategoryFunc(id, pillID, dropdownId) {
+    function removeCategory(id, pillID, dropdownId) {
       return () => {
         let dropdownInstance = document.getElementById(dropdownId).instance;
         dropdownInstance && dropdownInstance.hide();

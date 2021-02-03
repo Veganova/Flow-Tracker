@@ -16,6 +16,7 @@
     modal.style.display = "flex";
 
     $(modal).find(".new-content").html(content);
+    return $(modal).find(".new-content").get(0);
   }
 
   // When the user clicks on <span> (x), close the modal
@@ -127,15 +128,19 @@
     function confirmActionModal(dropdownId, confirmCallback) {
       let dropdownInstance = document.getElementById(dropdownId).instance;
       dropdownInstance && dropdownInstance.hide();
-      openModal(
+      let modalContent = openModal(
         `
-        <div class="confirm-action-modal">
-          <div class="question">Are you sure?</div>
-          <div class="accept-button">Yes</div>
-          <div class="reject-button" onclick="${confirmCallback}">No</div>
+        <div class="color-picker-modal">
+          This will not remove the category from existing sessions.
+          <div class="confirm-button confirm-button--red">Remove</div>
         </div>
         `
       );
+      let confirm = modalContent.querySelector(".confirm-button");
+      confirm.addEventListener("click", () => {
+        confirmCallback();
+        closeModal();
+      });
     }
 
   </script>

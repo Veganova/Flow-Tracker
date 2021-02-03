@@ -69,10 +69,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 <body>
   <div class="container">
-   <?= renderNavBar() ?>
+   <?= renderNavBar("Login") ?>
     <div class="signup-container">
       <div class="signup-form">
-        <div class="form-title">Login</div>
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post"> 
           <div class="form-element <?php echo (!empty($username_err)) ? 'has-error' : ''; ?>">
               <div class="input-label">Username</div>

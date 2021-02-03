@@ -9,6 +9,7 @@ a {
   border-radius: 3px;
   border: solid 1px $default-foreground;
   color: $default-foreground;
+  background: $background-dark;
   text-decoration: none;
 
   &:hover, &:active {
@@ -17,6 +18,13 @@ a {
   }
 
   cursor: pointer;
+}
+
+.border-button--active, .border-button--active:hover, .border-button--active:active {
+  cursor: default;
+  color: $background-dark;
+  background: $secondary-foreground;
+  border-color: $secondary-foreground;
 }
 
 .bg-button {
@@ -32,4 +40,19 @@ a {
   }
 
   cursor: pointer;
+}
+
+.page-title {
+  font-weight: 200;
+  font-size: 30px;
+  line-height: 28px;
+  letter-spacing: 0.055em;
+  font-variant: small-caps;
+  text-transform: lowercase;
+  font-feature-settings: 'cp';
+
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  pointer-events: none;
 }

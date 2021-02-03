@@ -22,17 +22,26 @@
   $page_number = 0;
   $ELEMENTS_PER_PAGE = 10;
 
-  if($_SERVER["REQUEST_METHOD"] == "POST") {
-    $page_number = $_POST["page"] ?? 0;
+  if($_SERVER["REQUEST_METHOD"] == "GET") {
+    $page_number = $_GET["page"] ?? 0;
+  }
+
+  function getActivityCount() {
+    global $pdo, $userId, $ELEMENTS_PER_PAGE;
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM session WHERE userId = ?");
+    if (!$stmt->execute([$userId])) {
+      print_r($stmt->errorInfo());
+    }
+    return $stmt->fetchColumn(); 
   }
 
   function getSortedSessions($page) {
     global $pdo, $userId, $ELEMENTS_PER_PAGE;
     $stmt = $pdo->prepare("
-    SELECT * FROM session 
-    WHERE userId = :userId
-    ORDER BY updated_at DESC
-    LIMIT :elementNumber, :countPerPage
+      SELECT * FROM session 
+      WHERE userId = :userId
+      ORDER BY updated_at DESC
+      LIMIT :elementNumber, :countPerPage
     ");
     $elementNumber = ($page * $ELEMENTS_PER_PAGE);
     $stmt->bindParam(':userId',  $userId, PDO::PARAM_INT);
@@ -66,35 +75,57 @@
     
     foreach($activities as $activity) {
       array_push($bySession[$activity->sessionId], $activity);
-    }
+    } 
 
     return $bySession;
   }
 
-  $sessions = getSortedSessions(0);
+  $sessions = getSortedSessions($page_number);
   function getSessionId($session) {
     return $session->id;
   }
   $sessionIds = array_map("getSessionId", $sessions);
-  $activities = getActivitiesBySession($sessionIds);
+  $activities = count($sessionIds) == 0 ? [] : getActivitiesBySession($sessionIds);
+  $totalActivityCount = getActivityCount();
+  $numPages = ceil($totalActivityCount / $ELEMENTS_PER_PAGE);
 ?>
 
-<pre>
+<!-- <pre>
 <?php
   // print_r($activities);
 ?>
-</pre>
+</pre> -->
 
 
 <body>
   <div class="container">
-   <?= renderNavBar() ?>
+   <?= renderNavBar("History") ?>
     <div class="plain-container">
       <?php
-        foreach(array_reverse($sessions) as $session) {
+        renderTableColumnNames(["Last Updated", "Duration", "#Activities", "Breakdown"]);
+        foreach($sessions as $session) {
           renderSessionDetails($session, $activities[$session->id]);  
         }
       ?>
+      <?php if($numPages > 1) { ?>
+      <form class="page-numbers" action="<?= htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="get">
+        <?php
+          foreach(range(0, $numPages - 1) as $numPage) {
+        ?>
+          <button 
+            value="<?= $numPage ?>" 
+            name="page" 
+            type="submit"
+            <?= $numPage == $page_number ? 'disabled' : '' ?> 
+            class="page-number border-button <?= $numPage == $page_number ? 'border-button--active' : '' ?>"
+          >
+            <?= $numPage + 1 ?>
+          </button>
+        <?php
+          }
+        }
+        ?>
+      </div>
     </div>
   </div>
 </body>

@@ -1,10 +1,37 @@
 @import "colors";
 
+.column-names-row {
+  display: flex;
+  width: 100%;
+
+  .column-name {
+    font-weight: bold;
+    font-size: 13.5px;
+  }
+}
+
+.column-names-row, .session-details {
+  .row-el {
+    flex-basis: 200px;
+    flex-grow: 1;
+    text-align: center;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
 .session-details {
   display: flex;
-  justify-content: space-between;
-  background:#4e4e4e;
+  align-items: center;
+  // background:#4e4e4e;
 
+  color: $default-foreground;
+  text-decoration: none;
+  font-size: 14px;
+
+  height: 30px;
   padding: 15px;
   border: 1px solid $secondary-foreground;
   border-bottom: none;
@@ -19,34 +46,43 @@
     border-bottom: 1px solid $secondary-foreground;
   }
 
-
   .chart-container {
-    height: 80px;
-    width: 80px;
+    height: 40px;
+    width: 40px;
     box-sizing: border-box;
 
-  //   // width: 100%;
-  //   // margin-top: 50px;
-  //   // text-align: center;
+    // width: 100%;
+    // margin-top: 50px;
+    // text-align: center;
   }
-  // .chartjs-tooltip {
-  //   opacity: 1;
-  //   position: absolute;
-  //   background: rgba(0, 0, 0, .7);
-  //   color: white;
-  //   border-radius: 3px;
-  //   -webkit-transition: all .1s ease;
-  //   transition: all .1s ease;
-  //   pointer-events: none;
-  //   -webkit-transform: translate(-50%, 0);
-  //   transform: translate(-50%, 0);
-  //   z-index: 10;
-  // }
+  .chartjs-tooltip {
+    opacity: 1;
+    position: absolute;
+    background: rgba(0, 0, 0, .7);
+    color: white;
+    border-radius: 3px;
+    -webkit-transition: all .1s ease;
+    transition: all .1s ease;
+    pointer-events: none;
+    -webkit-transform: translate(-50%, 0);
+    transform: translate(-50%, 0);
+    z-index: 10;
+  }
 
-  // .chartjs-tooltip-key {
-  //   display: inline-block;
-  //   width: 10px;
-  //   height: 10px;
-  //   margin-right: 10px;
-  // }
+  .chartjs-tooltip-key {
+    display: inline-block;
+    width: 15px;
+    height: 10px;
+    margin-right: 10px;
+  }
+}
+
+.page-numbers {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+
+  .page-number {
+    margin-left: 10px;
+  }
 }

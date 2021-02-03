@@ -1,10 +1,11 @@
 <script>
 
-  function renderChart(sessionId, labels, durations, colors) {
-    console.log(labels);
-    console.log(durations);
-    console.log(colors);
-    console.log("=========")
+  function renderChart(sessionId, labels, durations, colors, small) {
+
+    // console.log(labels);
+    // console.log(durations);
+    // console.log(colors);
+    // console.log("=========")
     let container = document.getElementById(sessionId);
     let ctx = container.querySelector(".chart").getContext("2d");
     const cfg = {
@@ -12,9 +13,8 @@
       data: {
         labels: labels,
         datasets: [{
-          borderColor: '#4e4e4e',
-          hoverBorderColor: "#616161",
-          borderWidth: 5,
+          borderColor: labels.length <= 1 ? "rgba(0,0,0,0)" : '#3A3A3A',
+          borderWidth: small ? 2 : 5,
           label: 'My First Dataset',
           data: durations,
           backgroundColor: colors,
@@ -22,7 +22,7 @@
         }]
       },
       options: {
-        cutoutPercentage: 40,
+        cutoutPercentage: small ? 0 : 40,
         maintainAspectRatio: false,
         animation: {
           animateRotate: true,
@@ -32,8 +32,8 @@
           display: false
         },
         tooltips: {
-          enabled: true,
-          custom2: function(tooltip) {
+          enabled: false,
+          custom: function(tooltip) {
             let tooltipEl = container.querySelector(".chartjs-tooltip");
 
             // Hide if no tooltip
@@ -85,6 +85,8 @@
 
             // Display, position, and set styles for font
             tooltipEl.style.opacity = 1;
+            console.log(tooltipEl);
+            console.log(tooltip);
             tooltipEl.style.left = positionX + tooltip.caretX + 'px';
             tooltipEl.style.top = positionY + tooltip.caretY + 'px';
             tooltipEl.style.fontFamily = tooltip._bodyFontFamily;
@@ -151,53 +153,74 @@
     $total = $total % 3600;
     $minutes = floor($total / 60);
     $seconds = $total % 60;
-    return pad($hours).":".pad($minutes).":".pad($seconds);
+    // return pad($hours).":".pad($minutes).":".pad($seconds);
+    return $hours."h ".$minutes."m";
   }
 
   function domID($session) {
     return "session-".$session->id;
   }
 
-  function renderSessionDetails($session, $activities) {
+  // One row showing session info
+  function renderSessionDetails($session, $activities, $small=true) {
     // Sort sessions by the ones that have the most recently added(/updated) activity 
     // Each activity with the percentage of it's 
+
+    $labels = retrieveLabels($activities);
+    $labelsEnc = json_encode($labels);
+    $result = activityDurationsAndColors($activities, $labels);
+    $durations = json_encode($result[0]);
+    $colors = json_encode($result[1]);
 ?>
-  <div id="<?= domID($session) ?>" class="session-details">
-    <div class="">
-      <?= $session->id ?>
-    </div>
-    <div class="date">
+  <a href="/pages/session.php?session=<?= $session->id ?>"id="<?= domID($session) ?>" class="session-details">
+    <div class="row-el date">
       <?= formatDate($session->updated_at) ?>
     </div>
-    <div class="duration">
+    <div class="row-el duration">
       <?= totalDuration($activities) ?> 
     </div>
 
-    <div class="chart-container">
-      <canvas class="chart"></canvas>
-      <div class="chartjs-tooltip">
-        <table></table>
+    <div class="row-el">
+      <?= count($activities) ?>
+    </div>
+
+    <div class="row-el">
+      <div class="chart-container">
+        <canvas class="chart"></canvas>
+        <div class="chartjs-tooltip">
+          <table></table>
+        </div>
       </div>
     </div>
-    
-  </div> 
+  
+  </a> 
   <script>
-    <?php
-      $labels = retrieveLabels($activities);
-      $labelsEnc = json_encode($labels);
-      $result = activityDurationsAndColors($activities, $labels);
-      $durations = json_encode($result[0]);
-      $colors = json_encode($result[1]);
-    ?>
     renderChart(
       "<?= domID($session) ?>", 
       JSON.parse('<?= $labelsEnc ?>') , 
       JSON.parse('<?= $durations ?>'), 
-      JSON.parse('<?= $colors ?>')
+      JSON.parse('<?= $colors ?>'),
+      <?= $small ?>
     );
   </script>
 
   
 <?php
+  }
+
+  function renderTableColumnNames($tableColumns) {
+  ?>
+    <div class="column-names-row">
+  <?php
+    foreach($tableColumns as $tableColumn) {
+  ?>
+        <div class="row-el column-name">
+          <?= $tableColumn ?>
+        </div>
+  <?php
+    }
+  ?>
+    </div>
+  <?php
   }
 ?>

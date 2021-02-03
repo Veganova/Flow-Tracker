@@ -82,8 +82,10 @@
     ?>
     <div class="top-bar">
       <a href="/" class="back"><img src="../assets/back.svg" alt="pause button"></a>
-      <div class="title">ACTIVE SESSION</div>
-      <?= render_save($session); ?>
+      <div class="page-title">ACTIVE SESSION</div>
+      <?php
+      //  echo render_save($session); 
+      ?>
     </div>
     <?php
   }

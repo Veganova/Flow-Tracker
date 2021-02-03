@@ -189,6 +189,7 @@
               if (this.paused) {
                 this.unpause(true);
               } else {
+                this.updateTimePill(()=>{});
                 this.pause();
               }
             } else {

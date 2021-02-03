@@ -7,10 +7,10 @@ require_once $ROOT."templates/nav_bar.php";
 function isExistingUsername($username) {
   global $pdo;
 
-  $sql = "SELECT id FROM users WHERE username = ?";
+  $sql = "SELECT COUNT(*) as count FROM user WHERE username = ?";
   $stmt = $pdo->prepare($sql);
-  $stmt->setFetchMode(PDO::FETCH_OBJ); 
-  return $stmt->execute([$username]);
+  $stmt->execute([$username]);
+  return $stmt->fetch(PDO::FETCH_ASSOC)["count"];
 }
 
 // Data for new users
@@ -112,10 +112,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 </head>
 <body>
   <div class="container">
-  <?= renderNavBar() ?>
+  <?= renderNavBar("Sign Up") ?>
     <div class="signup-container">
       <div class="signup-form">
-        <div class="form-title">Sign Up</div>
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post"> 
             <div class="form-element <?php echo (!empty($username_err)) ? 'has-error' : ''; ?>">
                 <div class="input-label">Username</div>

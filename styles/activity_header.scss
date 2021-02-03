@@ -20,21 +20,6 @@
       height: 28px;
     }
   }
-
-  .title {
-    font-weight: 200;
-    font-size: 24px;
-    line-height: 28px;
-    letter-spacing: 0.055em;
-    font-variant: small-caps;
-    text-transform: lowercase;
-    font-feature-settings: 'cp';
-
-    position: fixed;
-    width: 100%;
-    text-align: center;
-    z-index: -1;
-  }
 }
 
 .pause-button {

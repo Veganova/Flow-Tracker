@@ -65,6 +65,7 @@
       require_once $ROOT.'classes/CategoryTimedPill.php';
       require_once $ROOT.'templates/active_session.php';
       require_once $ROOT.'component/modal.php';
+      require_once $ROOT."templates/nav_bar.php";
 
       function findCategoryById($categoryId, $categoryPills) {
         foreach($categoryPills as $categoryPill) {
@@ -125,7 +126,9 @@
         insertCategoryListScripts();
         insertModalScripts();
         
-        render_top_bar($session);
+        
+        // render_top_bar($session);
+        renderNavBar("Active Session");
         render_timed_pills($timedPills, $categoryPills);
         render_pill_choices($categoryPills);
         render_pause();
