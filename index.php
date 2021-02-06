@@ -18,7 +18,7 @@
 
   <body>
     <div class="container">
-      <?= renderNavBar() ?>
+      <?= renderNavBar("Home") ?>
 
       <?php if(isLoggedIn()) { ?>
         <div class="plain-container">

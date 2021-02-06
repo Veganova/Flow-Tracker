@@ -229,10 +229,11 @@
             hideAllButLastTime();
 
             // Scroll new timer into view
-            $('#timed_pills_container').animate({
-                scrollTop: parseInt(this.instance.offset().top)
-            }, 2000);
-
+            if(!$('#timed_pills_container').is(':animated') ) {
+              $('#timed_pills_container').animate({
+                  scrollTop: parseInt($('#timed_pills_container').get(0).scrollHeight) //parseInt(this.instance.offset().top)
+              }, 2000);              
+            }
             // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/call
             this.intervalTimer = setInterval(() => this.updateTime.call(this), 1000); // update about every second
           },
