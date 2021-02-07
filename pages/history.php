@@ -14,7 +14,7 @@
   ?>
 </head>
 
-<?
+<?php
   require_once $ROOT."templates/nav_bar.php";
   require_once $ROOT.'templates/session_card.php';
 
@@ -93,7 +93,7 @@
 
 <body>
   <div class="container">
-   <?= renderNavBar("History") ?>
+    <?= renderNavBar("History") ?>
     <div class="plain-container">
       <?php
         renderTableColumnNames(["Last Updated", "Duration", "#Activities", "Breakdown"]);
