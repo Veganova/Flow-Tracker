@@ -1,11 +1,6 @@
 <script>
-
-  function renderChart(sessionId, labels, durations, colors, small) {
-
-    // console.log(labels);
-    // console.log(durations);
-    // console.log(colors);
-    // console.log("=========")
+  function renderChart(sessionId, labels, durations, colors, small, innerText="") {
+    let borderColor = small ? '#3A3A3A' : '#191818';
     let container = document.getElementById(sessionId);
     let ctx = container.querySelector(".chart").getContext("2d");
     const cfg = {
@@ -13,8 +8,9 @@
       data: {
         labels: labels,
         datasets: [{
-          borderColor: labels.length <= 1 ? "rgba(0,0,0,0)" : '#3A3A3A',
+          borderColor:  borderColor, //labels.length <= 1 ? 0 :
           borderWidth: small ? 2 : 5,
+          hoverBorderWidth: 0,
           label: 'My First Dataset',
           data: durations,
           backgroundColor: colors,
@@ -22,7 +18,8 @@
         }]
       },
       options: {
-        cutoutPercentage: small ? 0 : 40,
+        segmentStrokeColor: "transparent",
+        cutoutPercentage: small ? 0 : 80,
         maintainAspectRatio: false,
         animation: {
           animateRotate: true,
@@ -80,7 +77,7 @@
                 style += '; border-color:' + colors.borderColor;
                 style += '; border-width: 2px';
                 let span = '<span class="chartjs-tooltip-key" style="' + style + '"></span>';
-                innerHtml += '<tr><td>' + span + body + '</td></tr>';
+                innerHtml += '<tr><td class="chartjs-tooltip-value">' + span + body + '</td></tr>';
               });
               innerHtml += '</tbody>';
 
@@ -93,8 +90,6 @@
 
             // Display, position, and set styles for font
             tooltipEl.style.opacity = 1;
-            console.log(tooltipEl);
-            console.log(tooltip);
             tooltipEl.style.left = positionX + tooltip.caretX + 'px';
             tooltipEl.style.top = positionY + tooltip.caretY + 'px';
             tooltipEl.style.fontFamily = tooltip._bodyFontFamily;
@@ -105,7 +100,30 @@
         }
       }
     };
-    console.log("here!");
+
+    Chart.pluginService.register({
+      beforeDraw: function(chart) {
+        var width = chart.chart.width,
+            height = chart.chart.height,
+            ctx = chart.chart.ctx;
+
+        ctx.restore();
+        var fontSize = (height / 114).toFixed(2);
+        ctx.font = fontSize + "em sans-serif";
+        ctx.textBaseline = "middle";
+        // ctx.strokeStyle = "white";
+        ctx.fillStyle = "white";
+        console.log(ctx);
+
+        var text = innerText,
+            textX = Math.round((width - ctx.measureText(text).width) / 2),
+            textY = height / 2;
+
+        ctx.fillText(text, textX, textY);
+        ctx.save();
+      }
+    });
+
     let doughnut = new Chart(ctx, cfg);
   }
 
@@ -113,13 +131,18 @@
     e.preventDefault();
     e.stopPropagation();
   }
- 
+  
 </script>
 
 <?php
   function formatDate($date) {
-    $phpdate = strtotime( $date );
-    return date( 'Y/m/d \a\t H:i', $phpdate );
+    $phpdate = strtotime($date);
+    return date( 'm/d/Y H:i', $phpdate );
+  }
+
+  function formatDateWords($date) {
+    $phpdate = strtotime($date);
+    return date( 'm/d \a\t H:i', $phpdate );
   }
 
 
@@ -176,7 +199,7 @@
   }
 
   // One row showing session info
-  function renderSessionDetails($session, $activities, $small=true) {
+  function renderSessionDetailsRow($session, $activities, $small=true) {
     // Sort sessions by the ones that have the most recently added(/updated) activity 
     // Each activity with the percentage of it's 
 
@@ -236,5 +259,48 @@
   ?>
     </div>
   <?php
+  }
+  
+
+
+  function renderSessionDetailsCard($session, $activities) {
+    // Sort sessions by the ones that have the most recently added(/updated) activity 
+    // Each activity with the percentage of it's 
+
+    $labels = retrieveLabels($activities);
+    $labelsEnc = json_encode($labels);
+    $result = activityDurationsAndColors($activities, $labels);
+    $durations = json_encode($result[0]);
+    $colors = json_encode($result[1]);
+?>
+  <a href="/pages/session.php?session=<?= $session->id ?>"id="<?= domID($session) ?>" class="session-details-card">
+    <div class="row-el date">
+      <?= formatDateWords($session->updated_at) ?>
+    </div>
+    <div class="row-el">
+      <div class="chart-container" onclick="preventClick(event)">
+        <!-- <span class="center-text">0h 10m</span> -->
+        <canvas class="chart"></canvas>
+        <div class="chartjs-tooltip">
+          <table></table>
+        </div>
+        
+      </div>
+    </div>
+  
+  </a> 
+  <script>
+    renderChart(
+      "<?= domID($session) ?>", 
+      JSON.parse('<?= $labelsEnc ?>') , 
+      JSON.parse('<?= $durations ?>'), 
+      JSON.parse('<?= $colors ?>'),
+      false,
+      '<?= totalDuration($activities) ?>'
+    );
+  </script>
+
+  
+<?php
   }
 ?>

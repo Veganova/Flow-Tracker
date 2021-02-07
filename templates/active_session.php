@@ -115,7 +115,7 @@
     ?>
     <div class="timed-pills-container"> 
       <div class="timed-pills" >
-        <div class="scrolling-pills" id="timed_pills_container" onscroll="isOverflown()">
+        <div class="scrolling-pills scrolling-container" id="timed_pills_container" onscroll="isOverflown()">
           <?php 
             foreach($timedPills as $pill) {
               echo $pill->render();

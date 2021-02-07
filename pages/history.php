@@ -8,7 +8,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <?php
     require_once $ROOT."config/compile_styles.php";
   ?>
@@ -17,6 +16,7 @@
 <?php
   require_once $ROOT."templates/nav_bar.php";
   require_once $ROOT.'templates/session_card.php';
+  require_once $ROOT."functions/history.php";
 
   $userId = $_SESSION['userId'];
   $page_number = 0;
@@ -26,67 +26,13 @@
     $page_number = $_GET["page"] ?? 0;
   }
 
-  function getActivityCount() {
-    global $pdo, $userId, $ELEMENTS_PER_PAGE;
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM session WHERE userId = ?");
-    if (!$stmt->execute([$userId])) {
-      print_r($stmt->errorInfo());
-    }
-    return $stmt->fetchColumn(); 
-  }
-
-  function getSortedSessions($page) {
-    global $pdo, $userId, $ELEMENTS_PER_PAGE;
-    $stmt = $pdo->prepare("
-      SELECT * FROM session 
-      WHERE userId = :userId
-      ORDER BY updated_at DESC
-      LIMIT :elementNumber, :countPerPage
-    ");
-    $elementNumber = ($page * $ELEMENTS_PER_PAGE);
-    $stmt->bindParam(':userId',  $userId, PDO::PARAM_INT);
-    $stmt->bindParam(':elementNumber',  $elementNumber, PDO::PARAM_INT);
-    $stmt->bindParam(':countPerPage', $ELEMENTS_PER_PAGE, PDO::PARAM_INT);
-    if (!$stmt->execute()) {
-      print_r($stmt->errorInfo());
-    }
-    return $stmt->fetchAll(PDO::FETCH_OBJ);
-  }
-  
-  function getActivitiesBySession($sessionIds) {
-    global $pdo; 
-    $idsStr = implode(',', $sessionIds);
-    $stmt = $pdo->prepare("
-    SELECT * from activity 
-    JOIN category ON activity.categoryId = category.id
-    WHERE sessionId in (".$idsStr.")
-    ORDER BY endTime IS NULL, endTime ASC
-    ");
-    if (!$stmt->execute()) {
-      print_r($stmt->errorInfo());
-    }
-
-    $activities = $stmt->fetchAll(PDO::FETCH_OBJ);
-    $bySession = [];
-
-    foreach($sessionIds as $sessionId) {
-      $bySession[$sessionId] = [];
-    }
-    
-    foreach($activities as $activity) {
-      array_push($bySession[$activity->sessionId], $activity);
-    } 
-
-    return $bySession;
-  }
-
-  $sessions = getSortedSessions($page_number);
+  $sessions = getSortedSessions($page_number, $userId, $ELEMENTS_PER_PAGE);
   function getSessionId($session) {
     return $session->id;
   }
   $sessionIds = array_map("getSessionId", $sessions);
   $activities = count($sessionIds) == 0 ? [] : getActivitiesBySession($sessionIds);
-  $totalActivityCount = getActivityCount();
+  $totalActivityCount = getActivityCount($userId);
   $numPages = ceil($totalActivityCount / $ELEMENTS_PER_PAGE);
 ?>
 
@@ -98,7 +44,7 @@
       <?php
         renderTableColumnNames(["Last Updated", "Duration", "#Activities", "Breakdown"]);
         foreach($sessions as $session) {
-          renderSessionDetails($session, $activities[$session->id]);  
+          renderSessionDetailsRow($session, $activities[$session->id]);  
         }
       ?>
       <?php if($numPages > 1) { ?>
