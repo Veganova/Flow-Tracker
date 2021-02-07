@@ -90,12 +90,6 @@
   $numPages = ceil($totalActivityCount / $ELEMENTS_PER_PAGE);
 ?>
 
-<!-- <pre>
-<?php
-  // print_r($activities);
-?>
-</pre> -->
-
 
 <body>
   <div class="container">
@@ -125,7 +119,7 @@
           }
         }
         ?>
-      </div>
+      </form>
     </div>
   </div>
 </body>
