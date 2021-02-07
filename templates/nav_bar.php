@@ -4,7 +4,7 @@
 ?>
   <div class="nav-container">
     <div class="nav-bar">
-        <a href="/" class="page-name">FT</a>
+        <a href="/" class="page-name">FTT</a>
         <span class="filler"></span>
 <?php 
         if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"]) {

@@ -51,7 +51,15 @@
             }
 
             function getBody(bodyItem) {
-              return bodyItem.lines;
+              let line = bodyItem.lines[0];
+              let category = line.split(":")[0];
+              let totalSeconds = parseFloat(line.split(":")[1]);
+              let hours = Math.floor(totalSeconds / 3600);
+              totalSeconds = totalSeconds % 3600;
+              let minutes = Math.floor(totalSeconds / 60);
+              let seconds = totalSeconds % 60;
+              let formattedTime = hours + "h " + minutes + "m " + seconds + "s";
+              return `<span>${category}</span><div>${formattedTime}</div>`;
             }
 
             // Set Text
@@ -97,7 +105,13 @@
         }
       }
     };
+    console.log("here!");
     let doughnut = new Chart(ctx, cfg);
+  }
+
+  function preventClick(e) {
+    e.preventDefault();
+    e.stopPropagation();
   }
  
 </script>
@@ -136,7 +150,7 @@
     $colors = array_fill(0, count($labels), "black");
     foreach($activities as $activity) {
       $i = $indexMapping[$activity->name];
-      $durations[$i] += $activity->duration;
+      $durations[$i] += ($activity->duration);
       $colors[$i] = $activity->color;
     }
 
@@ -185,7 +199,7 @@
     </div>
 
     <div class="row-el">
-      <div class="chart-container">
+      <div class="chart-container" onclick="preventClick(event)">
         <canvas class="chart"></canvas>
         <div class="chartjs-tooltip">
           <table></table>
