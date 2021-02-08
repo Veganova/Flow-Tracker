@@ -62,7 +62,7 @@
   }
 }
 
-$border-width: px;
+$border-width: 2px;
 .session-details, .session-details-card {
   // border: 5px solid $background-dark;
   color: $default-foreground;
@@ -77,26 +77,8 @@ $border-width: px;
 
 $spacing: 10px;
 $card-padding-x: 15px;
-$card-width: 260px;
-$card-width-total: $card-width + $card-padding-x * 2 + 2 * $border-width + $spacing;
-.session-details-card {
-  position: relative;
-  scroll-snap-align: center;
-  // border: 1px solid $default-foreground;
-  border-radius: 5px;
-  background-color: #191818;//$secondary-background;
-  margin-right: $spacing;
-  width: $card-width;
-  padding: 50px $card-padding-x;
-  height: 300px;
-
-  &:hover, &:active {
-    // outline-color: $secondary-foreground;
-    border: $border-width solid $secondary-foreground;
-    // background: #616161;
-  }
-}
-
+$card-width: 275px;
+$card-width-total: $card-width + $card-padding-x * 2 + $border-width * 2 + $spacing;
 
 .card-panel-container {
   align-self: center;
@@ -115,21 +97,60 @@ $card-width-total: $card-width + $card-padding-x * 2 + 2 * $border-width + $spac
   }
   
   .card-panel {
-    // contains several panels
+    // contains several cards
     display: flex;
     overflow: scroll;
     scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    width: 100%;
   }
 }
 
-.card-panel, .card-panel-container {
+.card-panel-container {
   width: $card-width-total * 5;
-  @media only screen and (max-width: 1200px) {
+  @media only screen and (max-width: 1550px) {
     width: $card-width-total * 3;
+  }
+
+  @media only screen and (max-width: 930px) {
+    width: $card-width-total * 2;
   }
   
   @media only screen and (max-width: 600px) {
     width: $card-width-total;
+  }
+}
+
+.session-details-card {
+  // Resides in the card-panel
+  cursor: pointer;
+  position: relative;
+  scroll-snap-align: center;
+  scroll-behavior: smooth;
+  // border: 1px solid $default-foreground;
+  border-radius: 5px;
+  background-color: #191818;//$secondary-background;
+  margin-right: $spacing;
+  min-width: $card-width;
+  padding: 24px $card-padding-x;
+  // height: 300px;
+
+  &:hover, &:active {
+    border: $border-width solid $secondary-foreground;
+  }
+
+  .chart-container {
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+    height: 240px;
+    // width: 100%;
+    width: $card-width;
+  }
+
+  .date {
+    font-size: 19px;
+    margin-bottom: 60px;
   }
 }
 

@@ -1,4 +1,39 @@
 <script>
+  Chart.pluginService.register({
+      beforeDraw: function (chart) {
+          var width = chart.chart.width,
+              height = chart.chart.height,
+              ctx = chart.chart.ctx;
+          ctx.restore();
+          var fontSize = (height / 114).toFixed(2);
+          ctx.font = fontSize + "em sans-serif";
+          ctx.textBaseline = "middle";
+          ctx.fillStyle = "#E5E5E5";
+          var text = chart.config.options.elements.center.text,
+              textX = Math.round((width - ctx.measureText(text).width) / 2),
+              textY = height / 2;
+          ctx.fillText(text, textX, textY);
+          ctx.save();
+      }
+  });
+
+  function preventClick(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  function preventClickGraph(e, items) {
+    if ( items.length > 0 ) {
+      // clicked on the graph
+      e.preventDefault();
+      e.stopPropagation();
+    } 
+  }
+
+  function isAnchorClicked(link) {
+    location.href = link;
+  }
+
   function renderChart(sessionId, labels, durations, colors, small, innerText="") {
     let borderColor = small ? '#3A3A3A' : '#191818';
     let container = document.getElementById(sessionId);
@@ -18,9 +53,14 @@
         }]
       },
       options: {
-        segmentStrokeColor: "transparent",
+        onClick: preventClickGraph,
         cutoutPercentage: small ? 0 : 80,
         maintainAspectRatio: false,
+        elements: {
+          center: {
+            text: innerText
+          }
+        },
         animation: {
           animateRotate: true,
           // animateScale: true
@@ -101,35 +141,9 @@
       }
     };
 
-    Chart.pluginService.register({
-      beforeDraw: function(chart) {
-        var width = chart.chart.width,
-            height = chart.chart.height,
-            ctx = chart.chart.ctx;
-
-        ctx.restore();
-        var fontSize = (height / 114).toFixed(2);
-        ctx.font = fontSize + "em sans-serif";
-        ctx.textBaseline = "middle";
-        // ctx.strokeStyle = "white";
-        ctx.fillStyle = "white";
-        console.log(ctx);
-
-        var text = innerText,
-            textX = Math.round((width - ctx.measureText(text).width) / 2),
-            textY = height / 2;
-
-        ctx.fillText(text, textX, textY);
-        ctx.save();
-      }
-    });
+    
 
     let doughnut = new Chart(ctx, cfg);
-  }
-
-  function preventClick(e) {
-    e.preventDefault();
-    e.stopPropagation();
   }
   
 </script>
@@ -142,7 +156,7 @@
 
   function formatDateWords($date) {
     $phpdate = strtotime($date);
-    return date( 'm/d \a\t H:i', $phpdate );
+    return date( 'm/d \a\t h:i A', $phpdate );
   }
 
 
@@ -209,7 +223,7 @@
     $durations = json_encode($result[0]);
     $colors = json_encode($result[1]);
 ?>
-  <a href="/pages/session.php?session=<?= $session->id ?>"id="<?= domID($session) ?>" class="session-details">
+  <a href="/pages/session.php?session=<?= $session->id ?>" id="<?= domID($session) ?>" class="session-details">
     <div class="row-el date">
       <?= formatDate($session->updated_at) ?>
     </div>
@@ -273,12 +287,12 @@
     $durations = json_encode($result[0]);
     $colors = json_encode($result[1]);
 ?>
-  <a href="/pages/session.php?session=<?= $session->id ?>"id="<?= domID($session) ?>" class="session-details-card">
-    <div class="row-el date">
+  <div id="<?= domID($session) ?>" class="session-details-card" onclick='isAnchorClicked("<?="/pages/session.php?session=$session->id"?>")'>
+    <div class="date">
       <?= formatDateWords($session->updated_at) ?>
     </div>
-    <div class="row-el">
-      <div class="chart-container" onclick="preventClick(event)">
+    <div class="">
+      <div class="chart-container">
         <!-- <span class="center-text">0h 10m</span> -->
         <canvas class="chart"></canvas>
         <div class="chartjs-tooltip">
@@ -288,7 +302,7 @@
       </div>
     </div>
   
-  </a> 
+  </div> 
   <script>
     renderChart(
       "<?= domID($session) ?>", 
