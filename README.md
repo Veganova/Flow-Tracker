@@ -29,3 +29,20 @@ Had to change-
 
 Look into this for better URLs:
 https://stackoverflow.com/questions/34679002/remove-folder-names-from-the-url-using-htaccess
+
+
+#### Other:
+1. Create a sessions folder and give write acess
+```
+sudo chmod -R a+rw sessions/
+```
+2. Create a db_credentials.php file and populate it with the following creds:
+```
+<?php
+  $host = '';
+  $user = '';
+  $password = '';
+  $dbname = '';
+?>
+```
+

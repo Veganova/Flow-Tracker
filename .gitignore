@@ -1,3 +1,4 @@
 vendor
 composer.phar
 db_credentials.php
+sessions/*
